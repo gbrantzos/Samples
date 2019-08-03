@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzSample", "QuartzSample\QuartzSample.csproj", "{D62DC28F-024F-4826-8357-50FBAB9642E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzSample", "QuartzSample\QuartzSample.csproj", "{D62DC28F-024F-4826-8357-50FBAB9642E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuartzHostedService", "QuartzHostedService\QuartzHostedService.csproj", "{84C4970E-0C9B-435F-AF75-E55488D6B84A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
