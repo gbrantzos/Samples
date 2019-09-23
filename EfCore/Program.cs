@@ -23,21 +23,21 @@ namespace EfCore
                 .UseApplicationServiceProvider(serviceProvider);
             using (var db = new SampleDbContext(optionBuilder.Options))
             {
-                var q1 = db.Expenses.Where(e => e.ExpenseID.ID > 20);
+                var q1 = db.Expenses.Where(e => e.ExpenseID.ID != 20);
 
                 Expression<Func<Expense, bool>> e1 = (e) => e.Amount.Amount > 12;
                 Expression<Func<Expense, bool>> e2 = (e) => e.Amount.Amount < 2;
 
                 var exp = PredicateBuilder.Or(e1, e2);
 
-                var final = q1.Where(exp).ToList();
+                var finalQuery = q1.Where(exp);
+                var result = finalQuery.ToList();
 
                 var expenses = await db.Expenses.ToListAsync();
                 foreach (var e in expenses)
                 {
                     Console.WriteLine($"ID: {e.ExpenseID} - {e.Description}");
                 }
-
 
                 for (int i = 0; i < 20; i++)
                 {

@@ -17,16 +17,8 @@ namespace EfCore
 
         /// <summary>
         /// Get next ID for requested table
-        /// <list type="table">
-        /// <item>
-        /// <description>Item 1.</description>
-        /// </item>
-        /// <item>
-        /// <description>Item 2.</description>
-        /// </item>
-        /// </list>
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The next ID to be used.</returns>
         int NextID(string table);
     }
 

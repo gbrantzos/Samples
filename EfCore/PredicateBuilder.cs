@@ -10,8 +10,8 @@ namespace EfCore
         // https://blogs.msdn.microsoft.com/meek/2008/05/02/linq-to-entities-combining-predicates/
 
         // Handy methods, in case we don't have an initial predicate!
-        public static Expression<Func<T, bool>> True<T>() { return f => true; }
-        public static Expression<Func<T, bool>> False<T>() { return f => false; }
+        public static Expression<Func<T, bool>> True<T>() { return _ => true; }
+        public static Expression<Func<T, bool>> False<T>() { return _ => false; }
 
         public static Expression<Func<T, bool>> Or<T>(
             this Expression<Func<T, bool>> expr1,

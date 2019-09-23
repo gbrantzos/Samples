@@ -25,7 +25,7 @@ namespace EfCore.Models
 
         public Expense(string description, bool forOwner, DateTime issuedAt, Money amount, ExpenseCategory category)
         {
-            ExpenseID = EntityID.CreateNew<ExpenseID>();
+            // ExpenseID = EntityID.CreateNew<ExpenseID>();
             IssuedAt    = issuedAt;
             Description = description ?? throw new ArgumentNullException(nameof(description));
             Amount      = amount ?? throw new ArgumentNullException(nameof(amount));
