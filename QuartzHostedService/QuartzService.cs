@@ -18,8 +18,8 @@ namespace QuartzHostedService
         public IScheduler Scheduler { get; set; }
 
         public QuartzService(
-            ISchedulerFactory schedulerFactory, 
-            IJobFactory jobFactory, 
+            ISchedulerFactory schedulerFactory,
+            IJobFactory jobFactory,
             IEnumerable<JobSchedule> jobSchedules)
         {
             this.schedulerFactory = schedulerFactory;
@@ -43,7 +43,7 @@ namespace QuartzHostedService
             await Scheduler.Start(cancellationToken);
         }
 
-        public async Task StopAsync(CancellationToken cancellationToken) 
+        public async Task StopAsync(CancellationToken cancellationToken)
             => await Scheduler.Shutdown(cancellationToken);
 
         private ITrigger CreateTrigger(JobSchedule jobSchedule)

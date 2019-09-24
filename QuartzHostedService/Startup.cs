@@ -31,10 +31,13 @@ namespace QuartzHostedService
 
             // Add job
             services.AddScoped<SampleJob>();
+            services.AddTransient<SecondJob>();
             services.AddTransient<JobSchedule>(s => new JobSchedule(
                 jobType: typeof(SampleJob),
                 cronExpression: "0/10 * * * * ?"));
-
+            services.AddTransient<JobSchedule>(s => new JobSchedule(
+                jobType: typeof(SecondJob),
+                cronExpression: "0/14 * * * * ?"));
             // Hosted Service
             services.AddHostedService<QuartzService>();
         }

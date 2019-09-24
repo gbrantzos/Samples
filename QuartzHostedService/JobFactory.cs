@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Spi;
 
@@ -6,18 +7,28 @@ namespace QuartzHostedService
 {
     public class JobFactory : IJobFactory
     {
+        private readonly Dictionary<int, IServiceScope> scopes = new Dictionary<int, IServiceScope>();
         private readonly IServiceScopeFactory scopeFactory;
-        private IServiceScope scope;
 
-        public JobFactory(IServiceScopeFactory scopeFactory) 
+        public JobFactory(IServiceScopeFactory scopeFactory)
             => this.scopeFactory = scopeFactory;
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
-            scope = scopeFactory.CreateScope();
-            return scope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
+            var scope = scopeFactory.CreateScope();
+            var job = scope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
+            this.scopes.Add(job.GetHashCode(), scope);
+            return job;
         }
 
-        public void ReturnJob(IJob job) => scope?.Dispose();
+        public void ReturnJob(IJob job)
+        {
+            var key = job.GetHashCode();
+            if (scopes.TryGetValue(key, out var scope))
+            {
+                scope?.Dispose();
+                scopes.Remove(key);
+            }
+        }
     }
 }
