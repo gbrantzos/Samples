@@ -8,12 +8,34 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
+            var table = "Expense";
+            FormattableString ss = $"select * from {table}";
+            var s = ss.ToString(new CustomFormatProvider());
+
             var a = new AnObject() { Description = "Giorgio" };
             Console.WriteLine("Hello World!");
-
         }
     }
 
+    public class CustomFormatProvider : IFormatProvider
+    {
+        private readonly ICustomFormatter customFormatter = new CustomFormatter();
+
+        public object GetFormat(Type formatType)
+        {
+            if (formatType == typeof(ICustomFormatter))
+                return customFormatter;
+            return null;
+        }
+
+        public class CustomFormatter : ICustomFormatter
+        {
+            public string Format(string format, object arg, IFormatProvider formatProvider)
+            {
+                return $"Null: {arg}";
+            }
+        }
+    }
 
     public class AnObject
     {
