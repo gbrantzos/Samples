@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Spi;
@@ -7,22 +8,29 @@ namespace QuartzSample
 {
     public class JobFactory : IJobFactory
     {
-        private readonly IServiceProvider serviceProvider;
-        private IServiceScope scope;
+        private readonly Dictionary<int, IServiceScope> scopes = new Dictionary<int, IServiceScope>();
+        private readonly IServiceScopeFactory scopeFactory;
 
-        public JobFactory(IServiceProvider serviceProvider)
-            => this.serviceProvider = serviceProvider;
+        public JobFactory(IServiceScopeFactory scopeFactory)
+            => this.scopeFactory = scopeFactory;
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
-            scope = serviceProvider.CreateScope();
-            return scope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
+            var scope = scopeFactory.CreateScope();
+            var job = scope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
+            this.scopes.Add(job.GetHashCode(), scope);
+            return job;
         }
 
         public void ReturnJob(IJob job)
         {
-            (job as IDisposable)?.Dispose();
-            scope?.Dispose();
+            var key = job.GetHashCode();
+            if (scopes.TryGetValue(key, out var scope))
+            {
+                (job as IDisposable)?.Dispose();
+                scope?.Dispose();
+                scopes.Remove(key);
+            }
         }
     }
 }

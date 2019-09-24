@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Spi;
@@ -26,6 +27,7 @@ namespace QuartzHostedService
             var key = job.GetHashCode();
             if (scopes.TryGetValue(key, out var scope))
             {
+                (job as IDisposable)?.Dispose();
                 scope?.Dispose();
                 scopes.Remove(key);
             }

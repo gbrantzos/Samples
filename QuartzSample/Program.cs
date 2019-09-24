@@ -10,9 +10,9 @@ using Quartz.Impl;
 
 namespace QuartzSample
 {
-    class Program
+    internal static class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var configBuilder = new ConfigurationBuilder()
                .SetBasePath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location))
@@ -33,7 +33,7 @@ namespace QuartzSample
             };
             var factory = new StdSchedulerFactory(props);
             var scheduler = await factory.GetScheduler();
-            scheduler.JobFactory = new JobFactory(serviceProvider);
+            scheduler.JobFactory = new JobFactory(serviceProvider.GetRequiredService<IServiceScopeFactory>());
 
             var job = JobBuilder
                 .Create<DemoJob>()
@@ -48,7 +48,7 @@ namespace QuartzSample
 
             await scheduler.ScheduleJob(job, trigger);
             await scheduler.Start();
-            
+
             Console.ReadKey();
             await scheduler.Shutdown();
         }
