@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfCore", "EfCore\EfCore.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workbench", "Workbench\Workbench.csproj", "{509F345A-7F83-4866-854F-5D17F393134E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{911FC20E-89FC-4E6F-AD34-FE23AFD0CC3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{509F345A-7F83-4866-854F-5D17F393134E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{509F345A-7F83-4866-854F-5D17F393134E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{509F345A-7F83-4866-854F-5D17F393134E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{911FC20E-89FC-4E6F-AD34-FE23AFD0CC3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{911FC20E-89FC-4E6F-AD34-FE23AFD0CC3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{911FC20E-89FC-4E6F-AD34-FE23AFD0CC3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{911FC20E-89FC-4E6F-AD34-FE23AFD0CC3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
