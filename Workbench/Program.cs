@@ -8,6 +8,15 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
+            Expression<Func<int, bool>> exp = (i) => i > 0;
+
+            var inv = Expression.Invoke(exp, Expression.Constant(4));
+            Console.WriteLine(inv);
+
+            var lamda = Expression.Lambda(inv.Expression, ParameterExpression.Parameter(typeof(int), "i"));
+            var comp = lamda.Compile();
+            var result = comp.DynamicInvoke(32);
+
             var table = "Expense";
             FormattableString ss = $"select * from {table}";
             var s = ss.ToString(new CustomFormatProvider());
