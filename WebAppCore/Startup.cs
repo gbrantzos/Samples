@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace WebAppCore
 {
@@ -26,6 +20,11 @@ namespace WebAppCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.Configure<SasConnection>("Pharmex", Configuration.GetSection("SasConnections:Pharmex"));
+            services.Configure<SasConnection>("Kafea", Configuration.GetSection("SasConnections:Kafea"));
+            services.Configure<SasConnection>("GbWorks", Configuration.GetSection("SasConnections:GbWorks"));
+            services.Configure<SasConnection>(String.Empty, Configuration.GetSection("SasConnections:Default"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

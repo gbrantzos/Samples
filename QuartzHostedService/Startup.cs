@@ -38,6 +38,7 @@ namespace QuartzHostedService
             services.AddTransient<JobSchedule>(s => new JobSchedule(
                 jobType: typeof(SecondJob),
                 cronExpression: "0/14 * * * * ?"));
+
             // Hosted Service
             services.AddHostedService<QuartzService>();
         }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace WebAppCore
@@ -14,6 +15,10 @@ namespace WebAppCore
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
+                .ConfigureAppConfiguration(builder =>
+                {
+                    builder.AddYamlFile("SasConnection.yaml", optional: false, reloadOnChange: true);
+                })
                 .UseSerilog((ctx, config) => { config.ReadFrom.Configuration(ctx.Configuration); });
     }
 }
