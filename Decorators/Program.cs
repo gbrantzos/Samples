@@ -54,6 +54,9 @@ namespace Decorators
             var mediatr = container.Resolve<IMediator>();
             var result = mediatr.Send(request).Result;
             Console.WriteLine($"Result was: '{result.Message}'");
+            
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.Write('\u2103');
 
             Console.ReadLine();
         }
