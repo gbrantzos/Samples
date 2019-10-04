@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using IdGen;
 
 namespace Sandbox
 {
@@ -8,6 +10,13 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
+            var idGen = new IdGenerator(404);
+            foreach (var item in Enumerable.Range(1, 100))
+            {
+                Console.WriteLine($"New id {idGen.CreateId()}");
+            }
+            Console.ReadLine(); return;
+            /*
             Expression<Func<int, bool>> exp = (i) => i > 0;
 
             var inv = Expression.Invoke(exp, Expression.Constant(4));
@@ -23,6 +32,7 @@ namespace Sandbox
 
             var a = new AnObject() { Description = "Giorgio" };
             Console.WriteLine("Hello World!");
+            */
         }
     }
 
