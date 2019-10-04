@@ -15,7 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorators", "Decorators\Decorators.csproj", "{7C2EB5AB-DB06-4E83-8A1A-06BA5B39F0C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAppCore", "WebAppCore\WebAppCore.csproj", "{CC129FCB-C0B8-4194-8BEE-627492D08CA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppCore", "WebAppCore\WebAppCore.csproj", "{CC129FCB-C0B8-4194-8BEE-627492D08CA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{5F7626A3-48F1-41D3-9E36-11FFF403D501}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{CC129FCB-C0B8-4194-8BEE-627492D08CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC129FCB-C0B8-4194-8BEE-627492D08CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC129FCB-C0B8-4194-8BEE-627492D08CA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F7626A3-48F1-41D3-9E36-11FFF403D501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F7626A3-48F1-41D3-9E36-11FFF403D501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F7626A3-48F1-41D3-9E36-11FFF403D501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F7626A3-48F1-41D3-9E36-11FFF403D501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
