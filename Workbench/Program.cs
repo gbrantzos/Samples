@@ -10,12 +10,14 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
-            var idGen = new IdGenerator(404);
+            var epoch = new DateTimeOffset(new DateTime(2019, 1, 1));
+            var mc = new MaskConfig(45, 8, 10);
+            var idGen = new IdGenerator(0, epoch, mc);
             foreach (var item in Enumerable.Range(1, 100))
             {
                 Console.WriteLine($"New id {idGen.CreateId()}");
             }
-            Console.ReadLine(); return;
+            Console.ReadLine();
             /*
             Expression<Func<int, bool>> exp = (i) => i > 0;
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,19 +10,17 @@ namespace WebAppCore.Controllers
     public class ValuesController : ControllerBase
     {
         private readonly ILogger<ValuesController> logger;
-        private readonly IOptionsSnapshot<SasConnection> options;
 
         public ValuesController(ILogger<ValuesController> logger, IOptionsSnapshot<SasConnection> options)
         {
             this.logger = logger;
-            var aa = options.Get("Pharmex");
+            //var aa = options.Get("Pharmex");
 
-            logger.LogInformation("Pharmex host {host}:{port}", aa.Host, aa.Port);
-            logger.LogInformation("Default host {host}:{port}", options.Value.Host, options.Value.Port);
+            //logger.LogInformation("Pharmex host {host}:{port}", aa.Host, aa.Port);
+            //logger.LogInformation("Default host {host}:{port}", options.Value.Host, options.Value.Port);
 
-            logger.LogInformation("GbWorks host {host}:{port}", options.Get("GbWorks").Host, options.Get("GbWorks").Port);
-            logger.LogInformation("Kafea host {host}:{port}", options.Get("Kafea").Host, options.Get("Kafea").Port);
-
+            //logger.LogInformation("GbWorks host {host}:{port}", options.Get("GbWorks").Host, options.Get("GbWorks").Port);
+            //logger.LogInformation("Kafea host {host}:{port}", options.Get("Kafea").Host, options.Get("Kafea").Port);
         }
 
         // GET api/values
