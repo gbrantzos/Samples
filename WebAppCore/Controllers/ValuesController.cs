@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace WebAppCore.Controllers
 {
@@ -15,7 +18,9 @@ namespace WebAppCore.Controllers
         private readonly ILogger<ValuesController> logger;
         private readonly IOptionsSnapshot<SasConnection> options;
 
-        public ValuesController(ILogger<ValuesController> logger, IOptionsSnapshot<SasConnection> options)
+        public ValuesController(ILogger<ValuesController> logger,
+            IOptionsSnapshot<SasConnection> options,
+            IConfiguration configuration)
         {
             this.logger = logger;
             var aa = options.Get("Pharmex");
@@ -26,6 +31,17 @@ namespace WebAppCore.Controllers
             logger.LogInformation("GbWorks host {host}:{port}", options.Get("GbWorks").Host, options.Get("GbWorks").Port);
             logger.LogInformation("Kafea host {host}:{port}", options.Get("Kafea").Host, options.Get("Kafea").Port);
 
+            ChangeToken.OnChange(
+                    () => configuration.GetReloadToken(),
+                    () => {
+                        Thread.Sleep(250);
+                        Load(reload: true);
+                    });
+        }
+
+        private void Load(bool reload)
+        {
+            logger.LogWarning("Configuration reloaded!");
         }
 
         // GET api/values

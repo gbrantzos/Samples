@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
 
-namespace QuartzHostedService
+namespace QuartzHostedService.Samples
 {
     [DisallowConcurrentExecution]
     public class SampleJob : IJob
@@ -20,6 +20,11 @@ namespace QuartzHostedService
 
         public Task Execute(IJobExecutionContext context)
         {
+            logger.LogInformation($"Running: {context.JobDetail.Key}");
+
+            foreach (var item in context.JobDetail.JobDataMap)
+                logger.LogDebug($"Key: {item.Key} - Value: {item.Value}");
+
             logger.LogInformation("Sample Job executed at {executionTime}, using {customerID}...", DateTime.Now, settings.CustomerID);
             return Task.CompletedTask;
         }

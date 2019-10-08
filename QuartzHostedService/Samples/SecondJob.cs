@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quartz;
 
-namespace QuartzHostedService
+namespace QuartzHostedService.Samples
 {
     [DisallowConcurrentExecution]
     public class SecondJob : IJob

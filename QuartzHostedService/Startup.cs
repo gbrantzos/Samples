@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Collections.Specialized;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
-using Quartz.Impl;
-using Quartz.Spi;
+using QuartzHostedService.QuartzScheduler;
+using QuartzHostedService.Samples;
 
 namespace QuartzHostedService
 {
@@ -25,22 +25,16 @@ namespace QuartzHostedService
             // Settings
             services.Configure<SampleSettings>(configuration.GetSection("SampleSettings"));
 
-            // Add Quartz services
-            services.AddSingleton<IJobFactory, JobFactory>();
-            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            // Add hosted Quartz service
+            var props = new NameValueCollection
+            {
+                { "quartz.scheduler.instanceName", "Quartz Sample" }
+            };
+            services.AddQuartzHostedService(props);
 
-            // Add job
+            // Add jobs
             services.AddScoped<SampleJob>();
             services.AddTransient<SecondJob>();
-            services.AddTransient<JobSchedule>(s => new JobSchedule(
-                jobType: typeof(SampleJob),
-                cronExpression: "0/10 * * * * ?"));
-            services.AddTransient<JobSchedule>(s => new JobSchedule(
-                jobType: typeof(SecondJob),
-                cronExpression: "0/14 * * * * ?"));
-
-            // Hosted Service
-            services.AddHostedService<QuartzService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

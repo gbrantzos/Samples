@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzSample", "QuartzSample\QuartzSample.csproj", "{D62DC28F-024F-4826-8357-50FBAB9642E8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuartzHostedService", "QuartzHostedService\QuartzHostedService.csproj", "{84C4970E-0C9B-435F-AF75-E55488D6B84A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfCore", "EfCore\EfCore.csproj", "{10D93E8F-5287-4717-9558-0E39A78F3F7D}"
@@ -17,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decorators", "Decorators\De
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppCore", "WebAppCore\WebAppCore.csproj", "{CC129FCB-C0B8-4194-8BEE-627492D08CA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{5F7626A3-48F1-41D3-9E36-11FFF403D501}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService", "WorkerService\WorkerService.csproj", "{5F7626A3-48F1-41D3-9E36-11FFF403D501}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D62DC28F-024F-4826-8357-50FBAB9642E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84C4970E-0C9B-435F-AF75-E55488D6B84A}.Release|Any CPU.ActiveCfg = Release|Any CPU
