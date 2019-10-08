@@ -36,6 +36,9 @@ namespace QuartzHostedService.QuartzScheduler
             // Hosted Service
             services.AddHostedService<QuartzSchedulerService>();
 
+            // Jobs scheduler
+            services.AddSingleton<IJobScheduler, QuartzSchedulerService>();
+
             return services;
         }
     }

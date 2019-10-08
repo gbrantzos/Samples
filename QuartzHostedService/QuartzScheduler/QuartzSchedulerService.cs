@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -8,11 +9,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Quartz;
+using Quartz.Impl.Matchers;
 using Quartz.Spi;
 
-namespace QuartzHostedService
+namespace QuartzHostedService.QuartzScheduler
 {
-    public class QuartzSchedulerService : IHostedService
+    public class QuartzSchedulerService : IHostedService, IJobScheduler
     {
         private const string ConfigurationFileName = "SchedulerSettings.yaml";
 
@@ -39,27 +41,54 @@ namespace QuartzHostedService
                 .AddYamlFile(configurationPath, optional: true, reloadOnChange: true)
                 .Build();
 
-            schedulerConfiguration.OnChange(async () => await LoadConfiguration());
+            schedulerConfiguration.OnChange(async () => await Reload());
         }
 
-        private async Task LoadConfiguration(CancellationToken cancellationToken = default)
+        #region IJobScheduler methods
+        public async Task Start(CancellationToken cancellationToken = default)
+        {
+            var jobKeys = await Scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
+            int allJobs = jobKeys.Count;
+
+            var triggers = await Scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
+            int activeJobs = triggers.Count;
+
+            logger.LogInformation($"Configuration loaded, {allJobs} jobs found, {activeJobs} active.");
+            if (activeJobs == 0)
+                logger.LogWarning("Scheduler will not be started [no active jobs].");
+            else
+            {
+                await Scheduler.Start(cancellationToken);
+                logger.LogInformation("Scheduler started!");
+            }
+        }
+
+        public Task Stop(CancellationToken cancellationToken = default)
+        {
+            if (!Scheduler.InStandbyMode)
+            {
+                logger.LogInformation("Stopping scheduler...");
+                return Scheduler.Standby(cancellationToken);
+            }
+            return Task.CompletedTask;
+        }
+
+        public async Task Reload(CancellationToken cancellationToken = default)
         {
             try
             {
+                // Stop scheduler
+                await Stop(cancellationToken);
+
+                // Load configuration
                 var settings = schedulerConfiguration
                         .GetSection(nameof(SchedulerSettings))
                         .Get<SchedulerSettings>();
 
-                if (!Scheduler.InStandbyMode)
-                {
-                    logger.LogInformation("Stopping scheduler...");
-                    await Scheduler.Standby(cancellationToken);
-                }
-
                 await Scheduler.Clear();
                 foreach (var job in settings.Jobs)
                 {
-                    var quartzJob     = job.GetQuartzJob();
+                    var quartzJob = job.GetQuartzJob();
                     var quartzTrigger = job.GetQuartzTrigger();
                     if (job.Active)
                         await Scheduler.ScheduleJob(quartzJob, quartzTrigger, cancellationToken);
@@ -67,15 +96,8 @@ namespace QuartzHostedService
                         await Scheduler.AddJob(quartzJob, true, true, cancellationToken);
                 }
 
-                int activeJobs = settings.Jobs.Count(job => job.Active);
-                logger.LogInformation($"Configuration loaded, {settings.Jobs.Count} jobs found, {activeJobs} active.");
-                if (activeJobs == 0)
-                    logger.LogWarning("Scheduler will not be started [no active jobs].");
-                else
-                {
-                    await Scheduler.Start(cancellationToken);
-                    logger.LogInformation("Scheduler started!");
-                }
+                // Start scheduler
+                await Start(cancellationToken);
             }
             catch (Exception x)
             {
@@ -83,6 +105,35 @@ namespace QuartzHostedService
             }
         }
 
+        public async Task<SchedulerStatus> GetStatus(CancellationToken cancellationToken = default)
+        {
+            var result = new SchedulerStatus
+            {
+                Active = Scheduler.IsStarted && !Scheduler.InStandbyMode,
+                Jobs = new List<SchedulerJobStatus>()
+            };
+            var jobKeys = await Scheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
+            foreach (var key in jobKeys)
+            {
+                var details = await Scheduler.GetJobDetail(key);
+                var triggers = await Scheduler.GetTriggersOfJob(key);
+                var trigger = triggers.FirstOrDefault();
+                var jobStatus = new SchedulerJobStatus
+                {
+                    Name                      = details.Description,
+                    Active                    = trigger != null,
+                    CronExpression            = trigger == null ? "-" : trigger.Description,
+                    CronExpressionDescription = trigger == null ? "-" : trigger.Description,
+                    PreviousFireTime          = trigger?.GetPreviousFireTimeUtc()?.ToLocalTime().DateTime,
+                    NextFireTime              = trigger?.GetPreviousFireTimeUtc()?.ToLocalTime().DateTime
+                };
+                result.Jobs.Add(jobStatus);
+            }
+            return result;
+        }
+        #endregion
+
+        #region IHostedService methods
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             // Prepare Scheduler
@@ -90,11 +141,12 @@ namespace QuartzHostedService
             Scheduler.JobFactory = jobFactory;
 
             // Load and start
-            await LoadConfiguration(cancellationToken);
+            await Reload(cancellationToken);
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
             => await Scheduler.Shutdown(cancellationToken);
+        #endregion
     }
 
     // Based on https://gist.github.com/cocowalla/5d181b82b9a986c6761585000901d1b8

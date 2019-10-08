@@ -23,7 +23,8 @@ namespace QuartzHostedService
             Type jobType = GetJobType();
             var jobBuilder = JobBuilder
                 .Create(jobType)
-                .WithIdentity($"{Name} - {jobType.FullName}");
+                .WithIdentity($"{Name} - {jobType.FullName}")
+                .WithDescription(Name);
             if (Parameters?.Count > 0)
             {
                 var jobData = new JobDataMap();
