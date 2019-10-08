@@ -6,19 +6,20 @@ using Quartz.Spi;
 
 namespace QuartzHostedService
 {
-    public class JobFactory : IJobFactory
+    public class SchedulerJobFactory : IJobFactory
     {
         private readonly Dictionary<int, IServiceScope> scopes = new Dictionary<int, IServiceScope>();
         private readonly IServiceScopeFactory scopeFactory;
 
-        public JobFactory(IServiceScopeFactory scopeFactory)
+        public SchedulerJobFactory(IServiceScopeFactory scopeFactory)
             => this.scopeFactory = scopeFactory;
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
         {
             var scope = scopeFactory.CreateScope();
-            var job = scope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
+            var job   = scope.ServiceProvider.GetService(bundle.JobDetail.JobType) as IJob;
             this.scopes.Add(job.GetHashCode(), scope);
+
             return job;
         }
 

@@ -8,6 +8,8 @@ namespace QuartzHostedService
     public class SchedulerSettings
     {
         public ICollection<SchedulerJob> Jobs { get; set; }
+
+        // TODO Add validation logic
     }
 
     public class SchedulerJob
@@ -24,7 +26,7 @@ namespace QuartzHostedService
             var jobBuilder = JobBuilder
                 .Create(jobType)
                 .WithIdentity($"{Name} - {jobType.FullName}")
-                .WithDescription(Name);
+                .WithDescription($"{Name} @ {CronExpression}");
             if (Parameters?.Count > 0)
             {
                 var jobData = new JobDataMap();

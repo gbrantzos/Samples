@@ -28,10 +28,7 @@ namespace QuartzHostedService
             services.Configure<SampleSettings>(configuration.GetSection("SampleSettings"));
 
             // Add hosted Quartz service
-            var props = new NameValueCollection
-            {
-                { "quartz.scheduler.instanceName", "Quartz Sample" }
-            };
+            var props = new NameValueCollection { { "quartz.scheduler.instanceName", "Quartz Sample" } };
             services.AddQuartzHostedService(props);
 
             // Add jobs

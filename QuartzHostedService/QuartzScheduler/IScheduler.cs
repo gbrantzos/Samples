@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuartzHostedService.QuartzScheduler
 {
-    public interface IJobScheduler
+    public interface IScheduler
     {
         /// <summary>
         /// Start scheduler.
@@ -28,23 +26,11 @@ namespace QuartzHostedService.QuartzScheduler
         /// <returns></returns>
         Task Reload(CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Get current <see cref="SchedulerStatus"/> of <see cref="Scheduler"/>.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         Task<SchedulerStatus> GetStatus(CancellationToken cancellationToken = default);
-    }
-
-    public class SchedulerStatus
-    {
-        public bool Active { get; set; }
-        public List<SchedulerJobStatus> Jobs { get; set; }
-    }
-
-    public class SchedulerJobStatus
-    {
-        public string Name { get; set; }
-        public bool Active { get; set; }
-        public string CronExpression { get; set; }
-        public string CronExpressionDescription { get; set; }
-        public string Jobtype { get; set; }
-        public DateTime? PreviousFireTime { get; set; }
-        public DateTime? NextFireTime { get; set; }
     }
 }

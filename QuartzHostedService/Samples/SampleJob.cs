@@ -26,6 +26,9 @@ namespace QuartzHostedService.Samples
                 logger.LogDebug($"Key: {item.Key} - Value: {item.Value}");
 
             logger.LogInformation("Sample Job executed at {executionTime}, using {customerID}...", DateTime.Now, settings.CustomerID);
+
+            // throw new ArgumentException("Failed!");
+            context.Result = new { IsError = false, Message = "All fine!" };
             return Task.CompletedTask;
         }
     }

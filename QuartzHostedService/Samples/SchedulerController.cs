@@ -8,9 +8,9 @@ namespace QuartzHostedService.Samples
     [ApiController]
     public class SchedulerController : ControllerBase
     {
-        private readonly IJobScheduler scheduler;
+        private readonly IScheduler scheduler;
 
-        public SchedulerController(IJobScheduler scheduler) => this.scheduler = scheduler;
+        public SchedulerController(IScheduler scheduler) => this.scheduler = scheduler;
 
         public async Task<SchedulerStatus> Get() => await scheduler.GetStatus();
     }

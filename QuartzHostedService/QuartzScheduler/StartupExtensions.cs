@@ -12,7 +12,7 @@ namespace QuartzHostedService.QuartzScheduler
         public static IServiceCollection AddQuartzHostedService(this IServiceCollection services,
             NameValueCollection quartzProperties = null)
         {
-            // Add Quartz services
+            // Add default properties for Quartz
             var defaults = new NameValueCollection
             {
                 { "quartz.scheduler.instanceName", "Quartz Scheduler" },
@@ -30,14 +30,16 @@ namespace QuartzHostedService.QuartzScheduler
                         quartzProperties.Add(key, defaults.Get(key));
                 }
             }
-            services.AddSingleton<IJobFactory, JobFactory>();
+
+            // Add Quartz services
+            services.AddSingleton<IJobFactory, SchedulerJobFactory>();
             services.AddSingleton<ISchedulerFactory>(new StdSchedulerFactory(quartzProperties));
 
             // Hosted Service
-            services.AddHostedService<QuartzSchedulerService>();
+            services.AddHostedService<SchedulerHostedService>();
 
             // Jobs scheduler
-            services.AddSingleton<IJobScheduler, QuartzSchedulerService>();
+            services.AddSingleton<IScheduler, Scheduler>();
 
             return services;
         }
