@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using System.Text.Json.Serialization;
 
 namespace QuartzHostedService.QuartzScheduler
 {
@@ -14,7 +13,7 @@ namespace QuartzHostedService.QuartzScheduler
             FailedToLoad
         }
 
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public State SchedulerState { get; set; }
         public List<SchedulerJobStatus> Jobs { get; set; }
     }
@@ -30,7 +29,9 @@ namespace QuartzHostedService.QuartzScheduler
         public DateTime? NextFireTime { get; set; }
         public bool LastExecutionFailed => !String.IsNullOrEmpty(FailureMessage);
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        // This could possibly be solved in future
+        // https://github.com/dotnet/corefx/issues/40600
+        // [JsonIgnore(Condition = JsonIgnoreCondition.WhenNull)]
         public string FailureMessage { get; set; }
     }
 

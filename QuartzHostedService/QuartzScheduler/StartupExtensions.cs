@@ -9,26 +9,24 @@ namespace QuartzHostedService.QuartzScheduler
 {
     public static class StartupExtensions
     {
-        public static IServiceCollection AddQuartzHostedService(this IServiceCollection services,
+        public static IServiceCollection AddScheduler(this IServiceCollection services,
             NameValueCollection quartzProperties = null)
         {
             // Add default properties for Quartz
             var defaults = new NameValueCollection
             {
-                { "quartz.scheduler.instanceName", "Quartz Scheduler" },
-                { "quartz.threadPool.type", "Quartz.Simpl.SimpleThreadPool, Quartz" },
-                { "quartz.threadPool.threadCount", "4" },
-                { "quartz.jobStore.misfireThreshold", "60000" },
-                { "quartz.serializer.type", "binary"}
-            };
+                { "quartz.scheduler.instanceName"   , "Quartz Scheduler"                      },
+                { "quartz.threadPool.type"          , "Quartz.Simpl.SimpleThreadPool, Quartz" },
+                { "quartz.threadPool.threadCount"   , "4"                                     },
+                { "quartz.jobStore.misfireThreshold", "60000"                                 },
+                { "quartz.serializer.type"          , "binary"                                }
+                                                                                              };
             if (quartzProperties == null)
                 quartzProperties = defaults;
+            foreach (string key in defaults)
             {
-                foreach (string key in defaults)
-                {
-                    if (String.IsNullOrEmpty(quartzProperties.Get(key)))
-                        quartzProperties.Add(key, defaults.Get(key));
-                }
+                if (String.IsNullOrEmpty(quartzProperties.Get(key)))
+                    quartzProperties.Add(key, defaults.Get(key));
             }
 
             // Add Quartz services
