@@ -16,6 +16,7 @@ namespace QuartzHostedService.Samples
         public Task Execute(IJobExecutionContext context)
         {
             logger.LogInformation("Second Job executed at {executionTime}", DateTime.Now);
+
             return Task.CompletedTask;
         }
     }

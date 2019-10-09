@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace QuartzHostedService.QuartzScheduler
@@ -32,5 +33,14 @@ namespace QuartzHostedService.QuartzScheduler
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         Task<SchedulerStatus> GetStatus(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Execute scheduler job.
+        /// </summary>
+        /// <param name="name">Name of job to execute</param>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="ArgumentException">Thrown if name is not found on loaded job definitions</exception>
+        /// <returns></returns>
+        Task ExecuteJob(string name, CancellationToken cancellationToken = default);
     }
 }

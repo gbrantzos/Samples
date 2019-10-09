@@ -9,7 +9,23 @@ namespace QuartzHostedService
     {
         public ICollection<SchedulerJob> Jobs { get; set; }
 
-        // TODO Add validation logic
+        public void Validate()
+        {
+            var duplicateNames = Jobs
+                .GroupBy(job => job.Name)
+                .Select(group => new
+                {
+                    Name = group.Key,
+                    Count = group.Count()
+                })
+                .Where(group => group.Count > 1)
+                .Select(group => group.Name)
+                .ToArray();
+            if (duplicateNames.Length > 0)
+                throw new ArgumentException($"Duplicate job names: {String.Join(',', duplicateNames)}");
+            foreach (var job in Jobs)
+                job.Validate();
+        }
     }
 
     public class SchedulerJob
@@ -20,13 +36,24 @@ namespace QuartzHostedService
         public string JobType { get; set; }
         public List<Dictionary<string, string>> Parameters { get; set; }
 
+        public void Validate()
+        {
+            if (String.IsNullOrEmpty(Name))
+                throw new ArgumentNullException(nameof(Name));
+            if (String.IsNullOrEmpty(CronExpression))
+                throw new ArgumentNullException(nameof(CronExpression));
+            if (String.IsNullOrEmpty(JobType))
+                throw new ArgumentNullException(nameof(JobType));
+        }
+
         public IJobDetail GetQuartzJob()
         {
             Type jobType = GetJobType();
             var jobBuilder = JobBuilder
                 .Create(jobType)
+                .StoreDurably()
                 .WithIdentity($"{Name} - {jobType.FullName}")
-                .WithDescription($"{Name} @ {CronExpression}");
+                .WithDescription($"{Name}");
             if (Parameters?.Count > 0)
             {
                 var jobData = new JobDataMap();
