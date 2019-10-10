@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl.Matchers;
+using Quartz.Impl.Triggers;
 using Quartz.Spi;
 
 namespace QuartzHostedService.QuartzScheduler
@@ -112,25 +113,33 @@ namespace QuartzHostedService.QuartzScheduler
             var jobKeys = await quartzScheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
             foreach (var key in jobKeys)
             {
-                var jobDetail      = await quartzScheduler.GetJobDetail(key);
-                var triggers       = await quartzScheduler.GetTriggersOfJob(key);
+                var jobDetail      = await quartzScheduler.GetJobDetail(key, cancellationToken);
+                var triggers       = await quartzScheduler.GetTriggersOfJob(key, cancellationToken);
                 var trigger        = triggers.FirstOrDefault();
 
                 var internalDetail = internalDetails.First(dt => dt.JobKey.Equals(jobDetail.Key));
                 var name           = internalDetail.Name;
                 var cronExpression = internalDetail.CronExpression;
 
+                var triggerActive = trigger != null &&
+                    (await quartzScheduler.GetTriggerState(trigger.Key, cancellationToken) == TriggerState.Normal);
+
                 var jobStatus = new SchedulerJobStatus
                 {
                     Name                      = name,
-                    Active                    = trigger != null,
+                    Active                    = triggerActive,
                     JobType                   = jobDetail.JobType.Name,
                     CronExpression            = cronExpression,
                     PreviousFireTime          = trigger?.GetPreviousFireTimeUtc()?.ToLocalTime().DateTime,
                     NextFireTime              = trigger?.GetNextFireTimeUtc()?.ToLocalTime().DateTime
                 };
                 if (!String.IsNullOrEmpty(jobStatus.CronExpression))
+                {
+                    // var t = CronScheduleBuilder.CronSchedule(jobStatus.CronExpression).Build() as CronTriggerImpl;
+                    // jobStatus.CronExpressionDescription = t.GetExpressionSummary();
                     jobStatus.CronExpressionDescription = ExpressionDescriptor.GetDescription(jobStatus.CronExpression);
+                }
+
                 if (internalDetail.LastExecutionException != null)
                 {
                     var allMesages = internalDetail

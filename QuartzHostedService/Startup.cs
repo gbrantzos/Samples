@@ -27,11 +27,7 @@ namespace QuartzHostedService
 
             // Add hosted Quartz service
             var props = new NameValueCollection { { "quartz.scheduler.instanceName", "Quartz Sample" } };
-            services.AddScheduler(props);
-
-            // Add jobs
-            services.AddScoped<SampleJob>();
-            services.AddTransient<SecondJob>();
+            services.AddScheduler();// props, typeof(Startup).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
