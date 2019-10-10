@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CronExpressionDescriptor;
@@ -61,7 +62,10 @@ namespace QuartzHostedService.QuartzScheduler
             {
                 var initialized = await InitialiseScheduler(cancellationToken);
                 if (!initialized)
-                    throw new InvalidOperationException("Failed to initialize scheduler.");
+                {
+                    logger.LogError("Failed to initialize scheduler.");
+                    return;
+                }
             }
 
             var jobKeys = await quartzScheduler.GetJobKeys(GroupMatcher<JobKey>.AnyGroup());
@@ -71,11 +75,34 @@ namespace QuartzHostedService.QuartzScheduler
             int activeJobs = triggers.Count;
 
             logger.LogInformation($"Configuration loaded, {allJobs} jobs found, {activeJobs} active.");
+
+            await quartzScheduler.Start(cancellationToken);
             if (activeJobs == 0)
                 logger.LogWarning("Scheduler will be started, but has no active jobs!");
             else
                 logger.LogInformation("Scheduler started.");
-            await quartzScheduler.Start(cancellationToken);
+
+            if (allJobs > 0)
+                logger.LogInformation(await GetJobsQuickInfo());
+        }
+
+        private async Task<string> GetJobsQuickInfo()
+        {
+            var status = await GetStatus();
+            var sb = new StringBuilder();
+            sb.Append("Scheduler quick info:");
+            sb.AppendLine();
+            foreach (var job in status.Jobs)
+            {
+                sb.Append($"  {job.Name}");
+                if (job.Active)
+                    sb.Append($" runs { job.CronExpressionDescription}");
+                else
+                    sb.Append(" is inactive");
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
         public Task Stop(CancellationToken cancellationToken = default)
@@ -153,6 +180,8 @@ namespace QuartzHostedService.QuartzScheduler
 
                 result.Jobs.Add(jobStatus);
             }
+            result.Jobs.Sort((job1, job2) => job1.Name.CompareTo(job2.Name));
+
             return result;
         }
 
