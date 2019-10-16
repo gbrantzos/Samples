@@ -27,7 +27,7 @@ namespace WebAppCore.Controllers
             }
 
             //GenericSqlQueryResponse result = await this.mediator.Send(sqlQuery);
-            //return result.Data; 
+            //return result.Data;
         }
     }
 }

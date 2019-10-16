@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using RazorLight;
 
 namespace WebAppCore.Controllers
 {
@@ -27,6 +29,11 @@ namespace WebAppCore.Controllers
             //logger.LogInformation("Kafea host {host}:{port}", options.Get("Kafea").Host, options.Get("Kafea").Port);
         }
 
+        public class ViewModel
+        {
+            public string Name { get; set; }
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
@@ -40,9 +47,18 @@ namespace WebAppCore.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<ActionResult<string>> Get(int id)
         {
-            return "value";
+            var engine = new RazorLightEngineBuilder()
+              .UseMemoryCachingProvider()
+              .Build();
+
+            string template = "Hello, @Model.Name. Welcome to RazorLight repository";
+            ViewModel model = new ViewModel() { Name = "John Doe" };
+
+            return await engine.CompileRenderAsync("templateKey", template, model);
+
+            //return "value";
         }
 
         // POST api/values
