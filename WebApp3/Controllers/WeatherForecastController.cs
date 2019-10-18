@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Figgle;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -21,6 +22,9 @@ namespace WebApp3.Controllers
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
+
+            var message = FiggleFonts.Standard.Render("Cubes - v5");
+            _logger.LogInformation($"Starting service...{Environment.NewLine}{message}");
         }
 
         [HttpGet]
