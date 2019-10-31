@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using IdGen;
+using System.Reactive.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sandbox
 {
@@ -10,75 +10,26 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
-            var epoch = new DateTimeOffset(new DateTime(2019, 1, 1));
-            var mc = new MaskConfig(45, 8, 10);
-            var idGen = new IdGenerator(0, epoch, mc);
-            foreach (var item in Enumerable.Range(1, 100))
-            {
-                Console.WriteLine($"New id {idGen.CreateId()}");
-            }
+            var processor = new MyProcessor();
+            var workItems = Enumerable
+                .Range(1, 40)
+                .Select(i => $"Payload of item number {i}")
+                .ToList();
+            processor.AddRange(workItems);
+
+            Console.WriteLine("Hi!");
             Console.ReadLine();
-            /*
-            Expression<Func<int, bool>> exp = (i) => i > 0;
-
-            var inv = Expression.Invoke(exp, Expression.Constant(4));
-            Console.WriteLine(inv);
-
-            var lamda = Expression.Lambda(inv.Expression, ParameterExpression.Parameter(typeof(int), "i"));
-            var comp = lamda.Compile();
-            var result = comp.DynamicInvoke(32);
-
-            var table = "Expense";
-            FormattableString ss = $"select * from {table}";
-            var s = ss.ToString(new CustomFormatProvider());
-
-            var a = new AnObject() { Description = "Giorgio" };
-            Console.WriteLine("Hello World!");
-            */
         }
     }
 
-    public class CustomFormatProvider : IFormatProvider
+    public class MyProcessor : WorkItemProcessor<string>
     {
-        private readonly ICustomFormatter customFormatter = new CustomFormatter();
+        public MyProcessor() : base(5) { }
 
-        public object GetFormat(Type formatType)
+        protected override async Task Process(WorkItem<string> workItem, int worker)
         {
-            if (formatType == typeof(ICustomFormatter))
-                return customFormatter;
-            return null;
-        }
-
-        public class CustomFormatter : ICustomFormatter
-        {
-            public string Format(string format, object arg, IFormatProvider formatProvider)
-            {
-                return $"Null: {arg}";
-            }
-        }
-    }
-
-    public class AnObject
-    {
-        public int Id { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public Type ProgramType { get; set; }
-
-        public void AddProperty(Expression<Func<AnObject, object>> expression)
-        {
-            // Also look on https://stackoverflow.com/a/672212
-            var r1 = expression.Compile().Invoke(this);
-            var memberExpression = expression.Body as MemberExpression;
-            var propertyInfo = memberExpression.Member as PropertyInfo;
-
-            var r = propertyInfo.GetValue(this, null).ToString();
-        }
-
-        public AnObject()
-        {
-            Description = "Giorgio";
-            this.AddProperty(a => a.Description);
+            await Task.Delay(40);
+            Console.WriteLine($"Worker: {worker}, {workItem.Payload}, {Thread.CurrentThread.ManagedThreadId}");
         }
     }
 }
