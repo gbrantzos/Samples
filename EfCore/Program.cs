@@ -44,10 +44,5 @@ namespace EfCore
                 }
             }
         }
-
-        public static void Test()
-        {
-            using (var cnx = new SqlConnection("")) ;
-        }
     }
 }
