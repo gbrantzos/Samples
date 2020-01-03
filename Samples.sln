@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mediator", "Mediator\Mediat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfCore", "EfCore\EfCore.csproj", "{1BACD8E1-7124-4E94-A358-847942A35FEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventSourcingSample", "EventSourcingSample\EventSourcingSample.csproj", "{86E4BB86-6B59-4064-AC37-3DAFFCDB4A29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventSourcingSample", "EventSourcingSample\EventSourcingSample.csproj", "{86E4BB86-6B59-4064-AC37-3DAFFCDB4A29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

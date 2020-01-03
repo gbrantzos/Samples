@@ -10,7 +10,7 @@ namespace EfCore
     {
         public static void Main(string[] args)
         {
-            //Add - Migration - Name Initialization - Project Efcore - StartupProject EfCore
+            //Add - Migration - Name Initialization - Project EfCore - StartupProject EfCore
             //Remove - Migration - Project EfCore
             //Update - Database - Project EfCore
 
