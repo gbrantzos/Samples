@@ -43,11 +43,11 @@ namespace Sandbox
                     e.Entry.State = EntityState.Unchanged;
                     if (e.Entry.Entity is Person)
                     {
-                        int i = 1;
+                        //int i = 1;
                     }
                     if (e.Entry.Entity is ContactInfo)
                     {
-                        int v = 2;
+                        //int v = 2;
                     }
                 });
             }
