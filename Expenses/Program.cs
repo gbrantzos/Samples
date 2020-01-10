@@ -14,6 +14,7 @@ namespace Expenses
             var optionsBuilder = new DbContextOptionsBuilder<ExpensesDbContext>()
                 .UseSqlServer(connectionString);
 
+            var expense = new Expense(DateTime.Now, DateTime.Now, "Καθαριότητα", Money.Euro(58));
             //var expense = new Expense(new ExpenseId(), DateTime.Now, DateTime.Now, "Καθαριότητα", Money.Euro(58));
 
             using var db = new ExpensesDbContext(optionsBuilder.Options);

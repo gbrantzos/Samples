@@ -13,9 +13,9 @@ namespace Expenses.Domain
 
         protected Expense() { }
 
-        public Expense(long expenseId, DateTime createdAt, DateTime dueAt, string description, Money amount)
+        public Expense(DateTime createdAt, DateTime dueAt, string description, Money amount)
         {
-            ExpenseId   = expenseId;
+            ExpenseId   = KeyGenerator.NewId();
             CreatedAt   = createdAt;
             DueAt       = dueAt;
             Description = description ?? throw new ArgumentNullException(nameof(description));

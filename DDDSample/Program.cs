@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ardalis.GuardClauses;
 using Microsoft.EntityFrameworkCore;
 
 namespace DDDSample
@@ -21,10 +22,10 @@ namespace DDDSample
                 //order.AddItem(new OrderItem { Product = "Product 1", Quantity = 3 });
                 //db.Add(order);
 
-                var order = db.Orders.Include(o => o.Items).SingleOrDefault(o => o.Id == 1);
+                var order = db.Orders.Include(o => o.Items).SingleOrDefault(o => o.Id == 1) ?? new Order(123);
                 order.AddItem(new OrderItem("Product 1", 31));
-                order.RemoveItem("Product 4");
-
+                order.RemoveItem("");
+                ((IList<OrderItem>)order.Items).Add(null);
                 db.SaveChanges();
 
                 Console.WriteLine("Press any key to continue...");
@@ -35,7 +36,7 @@ namespace DDDSample
 
     public class Order
     {
-        public int Id { get; private set; }
+        public int Id        { get; private set; }
         public double Number { get; private set; }
 
         public Order(double number) => Number = number;
@@ -46,6 +47,8 @@ namespace DDDSample
         public void AddItem(OrderItem orderItem) => items.Add(orderItem);
         public void RemoveItem(string product)
         {
+            Guard.Against.NullOrEmpty(product, nameof(product));
+
             var orderItem = this.items.First(i => i.Product == product);
             items.Remove(orderItem);
         }
@@ -53,8 +56,8 @@ namespace DDDSample
 
     public class OrderItem
     {
-        public int Id { get; private set; }
-        public string Product { get; private set; }
+        public int    Id       { get; private set; }
+        public string Product  { get; private set; }
         public double Quantity { get; private set; }
 
         public OrderItem(string product, double quantity)
