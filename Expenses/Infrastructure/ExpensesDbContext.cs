@@ -6,6 +6,7 @@ namespace Expenses.Infrastructure
     public class ExpensesDbContext : DbContext
     {
         public DbSet<Expense> Expenses { get; set; }
+        public DbSet<Building> Buildings { get; set; }
 
         public ExpensesDbContext(DbContextOptions<ExpensesDbContext> options) : base(options) { }
 

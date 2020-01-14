@@ -1,8 +1,9 @@
-﻿using Expenses.Domain;
+﻿using System;
+using System.Threading.Tasks;
+using Expenses.Domain;
 using Expenses.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Expenses
 {
@@ -10,22 +11,36 @@ namespace Expenses
     {
         public static async Task Main(string[] args)
         {
-            var connectionString = "Server=(local);Database=Expenses;Trusted_Connection=True;MultipleActiveResultSets=true";
-            var optionsBuilder = new DbContextOptionsBuilder<ExpensesDbContext>()
-                .UseSqlServer(connectionString);
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.AddConsole();
+                builder.AddDebug();
+            });
 
-            var expense = new Expense(DateTime.Now, DateTime.Now, "Καθαριότητα", Money.Euro(58));
-            //var expense = new Expense(new ExpenseId(), DateTime.Now, DateTime.Now, "Καθαριότητα", Money.Euro(58));
+            var connectionString = "Data Source=Expenses.db";
+            var optionsBuilder = new DbContextOptionsBuilder<ExpensesDbContext>()
+                .UseSqlite(connectionString)
+                .UseLoggerFactory(loggerFactory);
+            optionsBuilder.EnableDetailedErrors(true);
+            optionsBuilder.EnableSensitiveDataLogging(true);
 
             using var db = new ExpensesDbContext(optionsBuilder.Options);
             db.Database.EnsureCreated();
 
-            var repository = new ExpenseRepository(db);
+            if (await db.Buildings.CountAsync() == 0)
+            {
+                var address = new Address("23 Giannitson Str");
+                var building = new Building("Giannitson 23", address);
 
-            var id = 659082018365112320;
-            var existing = await repository.GetById(id);
-            // await repository.Save(expense);
+                db.Add(building);
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                var building = await db.Buildings.FirstOrDefaultAsync();
+            }
 
+            Console.WriteLine($"Buildings: {await db.Buildings.CountAsync()}");
             Console.WriteLine("Hello World!");
             Console.ReadLine();
         }
