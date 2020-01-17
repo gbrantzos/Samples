@@ -10,7 +10,7 @@ namespace Expenses.Infrastructure.Configuration
         {
             builder
                 .ToTable("Building")
-                .OwnsOne(c => c.Address, b=> b.ToTable("Address"));
+                .OwnsOne(c => c.Address);
 
             builder
                 .HasMany(b => b.Apartments)
