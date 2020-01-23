@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PharmexTargets.Import
@@ -52,5 +54,8 @@ namespace PharmexTargets.Import
             if (sum != 0 && Math.Abs(sum - 100) > 0.01)
                 valuePercentages[6] = Math.Round(100 - valuePercentages.Where((_, i) => i != 6).Sum(), 2);
         }
+
+        public static IEnumerable<Months> AllMonths()
+            => Enum.GetValues(typeof(MonthPercentage.Months)).Cast<MonthPercentage.Months>();
     }
 }

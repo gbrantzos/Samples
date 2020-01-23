@@ -9,63 +9,75 @@ namespace PharmexTargets.Import
 {
     public interface IParser
     {
-        IEnumerable<Target> GetTargets();
+        IEnumerable<Target> GetTargets(Stream excelData);
     }
 
-    public class Parser : IDisposable, IParser
+    public class Parser : IParser
     {
         private readonly string TargetSheet = "Targets";
         private readonly string PercentagesSheet = "Percentages";
 
-        private readonly Stream excelData;
-        private readonly IExcelDataReader excelReader;
-
-        public Parser(string filePath)
+        public IEnumerable<Target> GetTargets(Stream excelData)
         {
-            excelData = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelData);
-        }
-
-        public IEnumerable<Target> GetTargets()
-        {
-            var ds = excelReader.AsDataSet(new ExcelDataSetConfiguration
+            using (var excelReader = ExcelReaderFactory.CreateOpenXmlReader(excelData))
             {
-                UseColumnDataType = true,
-                ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = true }
-            });
-
-            if (!ds.Tables.Contains(PercentagesSheet))
-                throw new ExcelParserException($"Sheet '{PercentagesSheet}' not found!");
-
-            if (!ds.Tables.Contains(TargetSheet))
-                throw new ExcelParserException($"Sheet '{TargetSheet}' not found!");
-            var monthPercentages = GetMonthPercentages(ds.Tables[PercentagesSheet]);
-
-            int rows = ds.Tables[TargetSheet].Rows.Count;
-            for (int i = 0; i < rows; i++)
-            {
-                var row = ds.Tables[TargetSheet].Rows[i];
-                var itemCode = row["ItemCode"].ToString();
-                if (String.IsNullOrEmpty(itemCode)) continue;
-
-                yield return new Target
+                var ds = excelReader.AsDataSet(new ExcelDataSetConfiguration
                 {
-                    ItemCode = itemCode,
-                    Quantity = row.SafeField<double>("Quantity"),
-                    Value = row.SafeField<double>("Value"),
-                    RatioPerCompany = new Ratio(new double[]
+                    UseColumnDataType = true,
+                    ConfigureDataTable = _ => new ExcelDataTableConfiguration { UseHeaderRow = true }
+                });
+
+                if (!ds.Tables.Contains(PercentagesSheet))
+                    throw new ExcelParserException($"Sheet '{PercentagesSheet}' not found!");
+
+                if (!ds.Tables.Contains(TargetSheet))
+                    throw new ExcelParserException($"Sheet '{TargetSheet}' not found!");
+
+                List<(string ItemCode, MonthPercentage monthPercentage)> monthPercentages;
+                try
+                {
+                    monthPercentages = GetMonthPercentages(ds.Tables[PercentagesSheet]).ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw new ExcelParserException("Could not read month percentages", ex);
+                }
+
+                int rows = ds.Tables[TargetSheet].Rows.Count;
+                for (int i = 0; i < rows; i++)
+                {
+                    Target target;
+                    try
+                    {
+                        var row      = ds.Tables[TargetSheet].Rows[i];
+                        var itemCode = row["ItemCode"].ToString();
+                        if (String.IsNullOrEmpty(itemCode)) continue;
+
+                        target = new Target
                         {
-                            row.SafeField<double>("Pharmex"),
-                            row.SafeField<double>("Papharm")
-                        }),
-                    MonthPercentage = monthPercentages.FirstOrDefault(i => i.ItemCode == itemCode).monthPercentage
-                };
+                            ItemCode        = itemCode,
+                            Quantity        = row.SafeField<double>("Quantity"),
+                            Value           = row.SafeField<double>("Value"),
+                            RatioPerCompany = new Ratio(new double[]
+                            {
+                                row.SafeField<double>("Pharmex"),
+                                row.SafeField<double>("Papharm")
+                            }),
+                            MonthPercentage = monthPercentages.FirstOrDefault(i => i.ItemCode == itemCode).monthPercentage
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ExcelParserException($"Could not parse target row {i}", ex);
+                    }
+                    if (target.MonthPercentage != null)
+                        yield return target;
+                }
             }
         }
 
-        private List<(string ItemCode, MonthPercentage monthPercentage)> GetMonthPercentages(DataTable dataTable)
+        private IEnumerable<(string ItemCode, MonthPercentage monthPercentage)> GetMonthPercentages(DataTable dataTable)
         {
-            var toReturn = new List<(string ItemCode, MonthPercentage monthPercentage)>();
             int rows = dataTable.Rows.Count;
             for (int i = 0; i < rows; i++)
             {
@@ -105,32 +117,8 @@ namespace PharmexTargets.Import
                         row.SafeField<double>("M12_VALUE")
                     });
 
-                toReturn.Add((itemCode, monthPercentage));
-            }
-            return toReturn;
-        }
-
-        #region IDisposable Support
-        private bool disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    excelReader?.Dispose();
-                    excelData?.Dispose();
-                }
-                disposedValue = true;
+                yield return (itemCode, monthPercentage);
             }
         }
-
-        // This code added to correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-        #endregion
     }
 }

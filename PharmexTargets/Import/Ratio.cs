@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PharmexTargets.Import
 {
@@ -6,13 +8,13 @@ namespace PharmexTargets.Import
     {
         public enum Companies
         {
-            Pharmex = 0,
+            Pharmex = 1,
             Papharm
         }
 
         private readonly double[] values;
 
-        public double this[Companies company] => values[(int)company];
+        public double this[Companies company] => values[(int)company -1];
 
         public Ratio(double[] values)
         {
@@ -26,5 +28,8 @@ namespace PharmexTargets.Import
 
         public override string ToString()
             => $"Pharmex: {this[Companies.Pharmex]:0.00%}, Papharm {this[Companies.Papharm]:0.00%}";
+
+        public static IEnumerable<Companies> AllCompanies()
+            => Enum.GetValues(typeof(Ratio.Companies)).Cast<Ratio.Companies>();
     }
 }
