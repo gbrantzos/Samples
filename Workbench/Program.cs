@@ -12,6 +12,8 @@ namespace Sandbox
 {
     public static class Program
     {
+        public static void Main2(string[] args) => Decorators.Program.Main(args);
+
         public static void Main(string[] args)
         {
             var person = new Person
