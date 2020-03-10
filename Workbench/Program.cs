@@ -12,14 +12,44 @@ namespace Sandbox
 {
     public static class Program
     {
-        public static void Main2(string[] args) => Decorators.Program.Main(args);
+        public static void Main2(string[] args) => Decorators.Program.MainDec(args);
 
         public static void Main(string[] args)
+        {
+            var list = new List<int> { 1, 2, 3, 4, 5 };
+            var e = Where(list, i => i % 2 == 0);
+            foreach (var i in e.Where(_ => true))
+            {
+                Console.WriteLine(i);
+            }
+            Console.ReadLine();
+        }
+
+        private static IEnumerable<int> Where(IEnumerable<int> list, Predicate<int> pr)
+        {
+            foreach (var i in list)
+            {
+                Console.WriteLine(i);
+                if (pr(i))
+                    yield return i;
+            }
+        }
+
+        public class C1
+        {
+            private readonly int _val;
+
+            public C1(int val) => _val = val;
+
+            public C1 Add(C1 toAdd) => new C1(_val + toAdd._val);
+        }
+
+        public static void Main1(string[] args)
         {
             var person = new Person
             {
                 Fullname = "Giorgio",
-                ContactInfo = new []
+                ContactInfo = new[]
                 {
                     new ContactInfo { Email = "g.brantzos@gmail.com", EmailType = EmailType.Personal }
                 }.ToList()

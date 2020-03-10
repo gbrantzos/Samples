@@ -11,7 +11,7 @@ namespace Decorators
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static void MainDec(string[] args)
         {
             // Based on article
             // https://alexmg.com/posts/upcoming-decorator-enhancements-in-autofac-4-9
