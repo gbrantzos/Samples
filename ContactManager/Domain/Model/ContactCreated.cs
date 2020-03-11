@@ -6,7 +6,8 @@ namespace ContactManager.Domain.Model
     {
         public string FullName { get; set; }
 
-        public ContactCreated(long aggregateID, int version, string fullName) : base(aggregateID, version)
+        public ContactCreated(long aggregateID, int version, string fullName)
+            : base(aggregateID, version)
         {
             this.FullName = fullName;
         }

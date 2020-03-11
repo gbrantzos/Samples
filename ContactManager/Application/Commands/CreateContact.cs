@@ -23,7 +23,7 @@ namespace ContactManager.Application.Commands
             {
                 var contactID = contactRepository.NextID();
 
-                var @event = new ContactCreated(contactID, 1, "Giorgio");
+                var @event = new ContactCreated(contactID, 1, request.FullName);
                 var contact = new Contact(contactID);
 
                 contact.Apply(@event);

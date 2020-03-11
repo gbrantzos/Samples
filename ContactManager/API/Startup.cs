@@ -22,7 +22,6 @@ namespace ContactManager.API
         {
             var thisAssembly = typeof(Startup).Assembly;
 
-            services.AddMediatR(thisAssembly);
             services
                 .AddControllers()
                 .AddNewtonsoftJson(options => options.UseCamelCasing(true));

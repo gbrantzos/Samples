@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Autofac.Extensions.DependencyInjection;
 using ContactManager.API;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +44,7 @@ namespace ContactManager
             var thisAssembly = typeof(Program).Assembly;
 
             return Host.CreateDefaultBuilder(args)
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .ConfigureServices((context, services) =>
                 {
                     services.AddMediatR(thisAssembly);

@@ -1,8 +1,9 @@
 ﻿using System;
+using MediatR;
 
 namespace ContactManager.Domain.Core
 {
-    public abstract class Event
+    public abstract class Event : INotification
     {
         public Guid EventID       { get; }
         public long AggregateID   { get; }
