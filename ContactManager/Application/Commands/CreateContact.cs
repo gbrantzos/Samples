@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ContactManager.Domain.Model;
 using MediatR;
 
-namespace ContactManager.Application
+namespace ContactManager.Application.Commands
 {
     public static class CreateContact
     {
@@ -14,14 +14,10 @@ namespace ContactManager.Application
 
         public class Handler : IRequestHandler<Command, bool>
         {
-            private readonly IMediator mediator;
             private readonly IContactRepository contactRepository;
 
-            public Handler(IMediator mediator, IContactRepository contactRepository)
-            {
-                this.mediator = mediator;
-                this.contactRepository = contactRepository;
-            }
+            public Handler(IContactRepository contactRepository)
+                => this.contactRepository = contactRepository;
 
             public Task<bool> Handle(Command request, CancellationToken cancellationToken)
             {
@@ -29,10 +25,9 @@ namespace ContactManager.Application
 
                 var @event = new ContactCreated(contactID, 1, "Giorgio");
                 var contact = new Contact(contactID);
-                contact.Apply(@event);
 
-                //contactRepository.Save(contact);
-                //mediator.Publish(@event);
+                contact.Apply(@event);
+                contactRepository.Save(contact);
 
                 return Task.FromResult(true);
             }

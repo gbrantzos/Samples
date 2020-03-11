@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
-using ContactManager.Application;
+using ContactManager.Application.Commands;
+using ContactManager.Application.Queries;
+using ContactManager.Application.ViewModel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +15,10 @@ namespace ContactManager.API.Controller
 
         public ContactController(IMediator mediator)
             => this.mediator = mediator;
+
+        [HttpGet("{id}")]
+        public async Task<ContactViewModel> Get(long id)
+            => await mediator.Send(new GetContact.Query { ID = id });
 
         [HttpPost]
         public async Task<bool> CreateContact(CreateContact.Command command)

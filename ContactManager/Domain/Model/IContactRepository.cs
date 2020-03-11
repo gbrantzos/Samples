@@ -1,7 +1,12 @@
-﻿namespace ContactManager.Domain.Model
+﻿using System.Threading.Tasks;
+using ContactManager.Domain.Core;
+
+namespace ContactManager.Domain.Model
 {
-    public interface IContactRepository
+    public interface IContactRepository : IAggregateRootRepository
     {
-        long NextID();
+        Task<Contact> GetByID(long id);
+
+        Task Save(Contact contact);
     }
 }

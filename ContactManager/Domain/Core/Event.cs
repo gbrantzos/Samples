@@ -4,13 +4,15 @@ namespace ContactManager.Domain.Core
 {
     public abstract class Event
     {
-        public Guid EventID     { get; }
-        public long AggregateID { get; }
-        public int Version      { get; }
+        public Guid EventID       { get; }
+        public long AggregateID   { get; }
+        public int Version        { get; }
+        public DateTime CreatedAt { get; }
 
         protected Event(long aggregateID, int version)
         {
             EventID     = Guid.NewGuid();
+            CreatedAt   = DateTime.UtcNow;
             AggregateID = aggregateID;
             Version     = version;
         }

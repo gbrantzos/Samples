@@ -25,7 +25,10 @@ namespace ContactManager.Domain.Core
 
             // Apply history
             foreach (var @event in events)
+            {
                 When(@event);
+                this.Version++;
+            }
         }
 
         public void Apply(Event @event)
@@ -37,7 +40,7 @@ namespace ContactManager.Domain.Core
         }
 
         public IEnumerable<Event> GetUnsavedChanges() => changes.AsReadOnly();
-        public void ClearCommitted() => changes.Clear();
+        public void ClearChanges() => changes.Clear();
 
         protected abstract void When(Event @event);
 
