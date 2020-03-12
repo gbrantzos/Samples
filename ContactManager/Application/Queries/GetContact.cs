@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using ContactManager.Application.ViewModel;
+using ContactManager.Application.ViewModels;
 using ContactManager.Domain.Model;
 using MediatR;
 

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using ContactManager.API.Middleware;
+using ContactManager.API.Swagger;
 using ContactManager.Infrastructure;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,14 +44,16 @@ namespace ContactManager.API
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
+            app.UseSwaggerThemes();
             app.UseSwagger(c => c.SerializeAsV2 = true);
             app.UseSwaggerUI(c =>
             {
                 c.DocumentTitle = "Contact Manager API";
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contact Manager API v1");
-                // c.InjectStylesheet("/swagger-theme");
+                c.InjectStylesheet("/swagger-theme");
             });
 
+            app.UseRequestLogging();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {

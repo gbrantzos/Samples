@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ContactManager.Application.Commands;
 using ContactManager.Application.Queries;
-using ContactManager.Application.ViewModel;
+using ContactManager.Application.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
