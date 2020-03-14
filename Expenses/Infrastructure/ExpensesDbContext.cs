@@ -18,6 +18,9 @@ namespace Expenses.Infrastructure
         }
     }
 
+    /// <summary>
+    /// Design time support
+    /// </summary>
     public class ExpensesDbContextFactory : IDesignTimeDbContextFactory<ExpensesDbContext>
     {
         public ExpensesDbContext CreateDbContext(string[] args)
