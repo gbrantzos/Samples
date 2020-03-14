@@ -53,7 +53,7 @@ namespace ContactManager
                         currentLogger.LogWarning(script);
                         // runner.MigrateUp();
                     }
-                };
+                }
 
                 currentLogger.LogInformation("Contact Manager starting...");
                 CreateHostBuilder(args)

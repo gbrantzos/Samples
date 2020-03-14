@@ -17,9 +17,9 @@ namespace Expenses
                 builder.AddDebug();
             });
 
-            var connectionString = "Data Source=Expenses.db";
+            var connectionString = "Server=(local);Database=Expenses;Trusted_Connection=true;";
             var optionsBuilder = new DbContextOptionsBuilder<ExpensesDbContext>()
-                .UseSqlite(connectionString)
+                .UseSqlServer(connectionString)
                 .UseLoggerFactory(loggerFactory);
             optionsBuilder.EnableDetailedErrors(true);
             optionsBuilder.EnableSensitiveDataLogging(true);

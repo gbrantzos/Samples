@@ -1,5 +1,6 @@
 ﻿using Expenses.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Expenses.Infrastructure
 {
@@ -14,6 +15,19 @@ namespace Expenses.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ExpensesDbContext).Assembly);
+        }
+    }
+
+    public class ExpensesDbContextFactory : IDesignTimeDbContextFactory<ExpensesDbContext>
+    {
+        public ExpensesDbContext CreateDbContext(string[] args)
+        {
+            var connectionString = "Server=(local);Database=Expenses;Trusted_Connection=true;";
+
+            var optionsBuilder = new DbContextOptionsBuilder<ExpensesDbContext>();
+            optionsBuilder.UseSqlServer(connectionString);
+
+            return new ExpensesDbContext(optionsBuilder.Options);
         }
     }
 }
