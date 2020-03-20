@@ -49,6 +49,8 @@ namespace Sandbox
                 .AddInMemoryCollection(result)
                 .Build();
             var fromConfig = config.GetSection(nameof(Agreement)).Get<Agreement>();
+            Console.WriteLine();
+            Console.WriteLine($"Random key: {KeyGenerator.GetUniqueKey(32)}");
 
             Console.ReadLine();
         }

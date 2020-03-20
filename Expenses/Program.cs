@@ -20,9 +20,9 @@ namespace Expenses
             var connectionString = "Server=(local);Database=Expenses;Trusted_Connection=true;";
             var optionsBuilder = new DbContextOptionsBuilder<ExpensesDbContext>()
                 .UseSqlServer(connectionString)
-                .UseLoggerFactory(loggerFactory);
-            optionsBuilder.EnableDetailedErrors(true);
-            optionsBuilder.EnableSensitiveDataLogging(true);
+                .UseLoggerFactory(loggerFactory)
+                .EnableDetailedErrors(true)
+                .EnableSensitiveDataLogging(true);
 
             using var db = new ExpensesDbContext(optionsBuilder.Options);
             db.Database.EnsureCreated();
