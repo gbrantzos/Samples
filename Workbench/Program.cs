@@ -7,8 +7,20 @@ namespace Sandbox
 {
     public static class Program
     {
+        public abstract class Base { }
+
+        public class Child : Base { }
+
+        public static void Process(Base anObj)
+        {
+            Console.WriteLine(anObj.GetType().Name);
+        }
+
         public static void Main(string[] args)
         {
+            var child = new Child();
+            Process(child);
+
             var agreement = new Agreement
             {
                 ID = 101,
