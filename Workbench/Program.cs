@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Sinks.Graylog;
 using Workbench;
 
 namespace Sandbox
@@ -16,8 +21,37 @@ namespace Sandbox
             Console.WriteLine(anObj.GetType().Name);
         }
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
+            var ta = new TasksWhenAny();
+            Console.WriteLine($"Starting at {DateTime.Now}");
+
+            var cts = new CancellationTokenSource();
+            var q1 = ta.ExecuteQuery("0:00:40", cts.Token);
+            var q2 = ta.ExecuteQuery("0:00:10", cts.Token);
+
+            var result = await Task.WhenAny(q1, q2);
+            Console.WriteLine($"Finished at {DateTime.Now}");
+
+            var actualResult = await result;
+            Console.WriteLine($"Result is: {actualResult}");
+            cts.Cancel();
+
+            //Log.Logger = new LoggerConfiguration()
+            //    .WriteTo.Console()
+            //    .WriteTo.Graylog(new GraylogSinkOptions
+            //    {
+            //        Facility = "test",
+            //        HostnameOrAddress = "graylog.gbworks.lan",
+            //        Port = 12201,
+            //        TransportType = Serilog.Sinks.Graylog.Core.Transport.TransportType.Udp
+            //    })
+            //    .CreateLogger();
+
+            //Log.Information("Hello from Console");
+            //Log.Error("This is an error!");
+            //Log.Warning("Here comes a {severe} warning!", "Duffy");
+            /*
             var child = new Child();
             Process(child);
 
@@ -77,8 +111,13 @@ namespace Sandbox
                 ConsoleUtility.WriteProgress(i, true);
                 System.Threading.Thread.Sleep(50);
             }
-
+            */
             Console.ReadLine();
+        }
+
+        private static void OnOutbound(double result)
+        {
+            Console.WriteLine($"Result: {result}");
         }
     }
 
