@@ -21,7 +21,7 @@ namespace Sandbox
             Console.WriteLine(anObj.GetType().Name);
         }
 
-        public static async Task Main(string[] args)
+        public static async Task Main_OLD(string[] args)
         {
             var ta = new TasksWhenAny();
             Console.WriteLine($"Starting at {DateTime.Now}");
@@ -113,6 +113,21 @@ namespace Sandbox
             }
             */
             Console.ReadLine();
+        }
+
+        public static void Main(string[] args)
+        {
+            ISessionManager mgr = new SessionManager(new SessionPool());
+            using (var session = mgr.Create())
+            {
+                using (var session2 = mgr.Create())
+                {
+                }
+
+            }
+            using var session1 = mgr.Create();
+
+            Console.ReadKey();
         }
 
         private static void OnOutbound(double result)
