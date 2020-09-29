@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using Serilog;
 using Serilog.Sinks.Graylog;
 using Workbench;
@@ -23,6 +24,27 @@ namespace Sandbox
 
         public static async Task Main_OLD(string[] args)
         {
+            var configurationBuilder = new ConfigurationBuilder()
+                .AddMyConfiguration();
+
+            var configuration = configurationBuilder.Build();
+            ChangeToken.OnChange(
+                () => configuration.GetReloadToken(),
+                () => {
+                    Console.WriteLine("Configuration changed!");
+                });
+
+            var v1 = configuration.GetSection("Test1").Value;
+            Console.WriteLine($"Value {v1}");
+            
+
+            await Task.CompletedTask;
+            Console.ReadLine();
+            
+            var v2 = configuration.GetSection("Test1").Value;
+            Console.WriteLine($"Value {v2}");
+            return;
+            /*
             var ta = new TasksWhenAny();
             Console.WriteLine($"Starting at {DateTime.Now}");
 
@@ -51,7 +73,7 @@ namespace Sandbox
             //Log.Information("Hello from Console");
             //Log.Error("This is an error!");
             //Log.Warning("Here comes a {severe} warning!", "Duffy");
-            /*
+            
             var child = new Child();
             Process(child);
 
