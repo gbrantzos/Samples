@@ -45,6 +45,10 @@ TestResult.xml
 
 # Packages output
 dist/
+tmp/
+
+# Version file, auto generated
+**/VersionInfo.cs
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
