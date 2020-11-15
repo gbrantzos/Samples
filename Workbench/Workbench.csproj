@@ -23,14 +23,14 @@
     <PackageReference Include="System.Reactive" Version="4.4.1" />
     <PackageReference Include="Autofac" Version="5.1.2" />
     <PackageReference Include="MediatR" Version="8.0.1" />
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
   </ItemGroup>
 
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Connected Services\" />
   </ItemGroup>
 
 </Project>

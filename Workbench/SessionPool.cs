@@ -64,6 +64,7 @@ namespace Workbench
             if (!_sessions.TryDequeue(out session))
                 session = Create();
 
+
             Console.WriteLine($"Get Session {session.GetHashCode()}");
             return session;
         }
