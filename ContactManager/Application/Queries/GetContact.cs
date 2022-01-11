@@ -22,11 +22,13 @@ namespace ContactManager.Application.Queries
 
             public async Task<ContactViewModel> Handle(Query request, CancellationToken cancellationToken)
             {
-                var contact = await contactRepository.GetByID(request.ID);
+                await Task.CompletedTask;
+                //var contact = await contactRepository.GetByID(request.ID);
+                //var contact = new Contact(1);
                 return new ContactViewModel
                 {
-                    ID = contact.ID,
-                    FullName = contact.FullName
+                    ID = 12, //contact.ID,
+                    FullName = "Giorgio" //contact.FullName
                 };
             }
         }

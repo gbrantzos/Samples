@@ -9,6 +9,7 @@ namespace ContactManager.API.Controller
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Produces("application/xml", "application/json")]
     public class ContactController : ControllerBase
     {
         private readonly IMediator mediator;

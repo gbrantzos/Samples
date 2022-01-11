@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Serialization;
 using ContactManager.API.Middleware;
 using ContactManager.API.Swagger;
 using ContactManager.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,7 +27,14 @@ namespace ContactManager.API
             var thisAssembly = typeof(Startup).Assembly;
 
             services
-                .AddControllers()
+                .AddControllers(options =>
+                {
+                    options.OutputFormatters.Add(new XmlSerializerOutputFormatterNamespace(new XmlWriterSettings
+                    {
+                        OmitXmlDeclaration = false
+                    }));
+                })
+                .AddXmlSerializerFormatters()
                 .AddNewtonsoftJson(options => options.UseCamelCasing(true));
 
             services.AddSwaggerGen(c =>
@@ -66,6 +76,18 @@ namespace ContactManager.API
                     await context.Response.CompleteAsync();
                 });
             });
+        }
+    }
+
+    public class XmlSerializerOutputFormatterNamespace : XmlSerializerOutputFormatter
+    {
+        public XmlSerializerOutputFormatterNamespace(XmlWriterSettings writerSettings) : base(writerSettings) { }
+        protected override void Serialize(XmlSerializer xmlSerializer, XmlWriter xmlWriter, object value)
+        {
+            //applying "empty" namespace will produce no namespaces
+            var emptyNamespaces = new XmlSerializerNamespaces();
+            emptyNamespaces.Add("", "");
+            xmlSerializer.Serialize(xmlWriter, value, emptyNamespaces);
         }
     }
 }

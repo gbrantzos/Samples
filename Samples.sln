@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workbench", "Workbench\Work
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContactManager", "ContactManager\ContactManager.csproj", "{86E4BB86-6B59-4064-AC37-3DAFFCDB4A29}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Expenses", "Expenses\Expenses.csproj", "{7AC35ADD-422F-45F9-B30E-6187E66E26E8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{86E4BB86-6B59-4064-AC37-3DAFFCDB4A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86E4BB86-6B59-4064-AC37-3DAFFCDB4A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86E4BB86-6B59-4064-AC37-3DAFFCDB4A29}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7AC35ADD-422F-45F9-B30E-6187E66E26E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7AC35ADD-422F-45F9-B30E-6187E66E26E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7AC35ADD-422F-45F9-B30E-6187E66E26E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7AC35ADD-422F-45F9-B30E-6187E66E26E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
