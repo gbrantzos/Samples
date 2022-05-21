@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using SqlKata;
@@ -12,20 +14,34 @@ namespace Sandbox
     {
         public static void Main(string[] args)
         {
-            var services = new ServiceCollection();
-            services.AddTransient(typeof(IService<>), typeof(Service<>));
+            var fileName = @"C:\wrk_Temp\InfoSupport\pakoworld.xml";
+            var xml = XDocument.Load(fileName);
 
-            services.AddTransient<IService<DTO>, ServiceDTO>();
-            services.AddTransient<IServiceExt>(sp => (IServiceExt)sp.GetRequiredService<IService<DTO>>());
-            var container = services.BuildServiceProvider();
 
-            var service = container.GetRequiredService<IService<DTO2>>();
-            var serviceExt = container.GetRequiredService<IServiceExt>();
-            var dto = serviceExt.Get("Brand new DTO!");
-            serviceExt.Do();
+            // DataMedia
+            var result = xml
+                .Root
+                .Elements("products")
+                .Elements("product")
+                .Take(10)
+                .Select(x => new
+                {
+                    Sku = x.Element("sku").Value,
+                    Available = x.Element("instock").Value == "Y"
+                })
+                .ToDictionary(e => e.Sku, e => e.Available);
 
-            Console.WriteLine(dto);
-            Console.ReadLine();
+            // Iliadis
+            //var result = xml
+            //    .Root
+            //    .Elements("products")
+            //    .Elements("product")
+            //    .Take(10)
+            //    .Select(x => new
+            //    {
+            //        sku = x.Element("sku").Value,
+            //        available = x.Element("instock").Value == "Y"
+            //    }).ToList();
         }
 
         public static void Main_SqlKata(string[] args)
@@ -108,7 +124,7 @@ namespace Sandbox
     {
         public void Do()
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public DTO Get(string key)
