@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Diagnostics;
+using MediatR;
 
 namespace SimpleApi;
 
@@ -26,7 +27,15 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
         {
             ["TraceID"] = traceID
         });
+        var sw = new Stopwatch();
+        sw.Start();
         _logger.LogInformation("Executing request {RequestType}", requestType.Name);
-        return next();
+        
+        var result = next();
+        
+        _logger.LogInformation("Execution time {ElapsedTime}ms", sw.ElapsedMilliseconds);
+        sw.Stop();
+        
+        return result;
     }
 }
