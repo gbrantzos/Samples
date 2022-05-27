@@ -1,4 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
+using FluentValidation;
 using MediatR;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -7,9 +8,11 @@ using Serilog.Templates;
 using Serilog.Templates.Themes;
 using SimpleApi;
 
+var thisAssembly = typeof(Program).Assembly;
+
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(new ExpressionTemplate(
-        "[{@l:u4}]{#if @p['TraceID'] is not null}[{@p['TraceID']}]{#end} {@m}\n{@x}",
+        "[{@l:u4}]{#if @p['TraceID'] is not null}[{@p['TraceID']} :: {@p['Request']}]{#end} {@m}\n{@x}",
         theme: TemplateTheme.Literate))
     .MinimumLevel.Debug()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -23,8 +26,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Use Autofac
-    builder.Host
-        .UseServiceProviderFactory(new AutofacServiceProviderFactory());
+    builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
     // Wire up Serilog
     builder.Host.UseSerilog();
@@ -46,21 +48,26 @@ try
 
     // Setup Mediator
     builder.Services
-        .AddMediatR(typeof(Program).Assembly)
-        .AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
+        .AddMediatR(thisAssembly)
+        .AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>))
+        .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+    
+    // Setup FluentValidation
+    builder.Services.AddValidatorsFromAssembly(thisAssembly);
 
     // Other services
-    builder.Services.AddHttpContextAccessor();
+    builder.Services
+        .AddHttpContextAccessor()
+        .AddScoped<DummyService>();
 
     // Build app and run
     var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
+
     app.MapControllers();
-
-
     app.MapGet("/", () => "Welcome to SimpleAPI!").ExcludeFromDescription();
-    ;
+    
     app.Run();
 }
 catch (Exception x)

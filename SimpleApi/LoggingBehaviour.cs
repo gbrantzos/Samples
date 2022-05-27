@@ -20,16 +20,17 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
         CancellationToken cancellationToken,
         RequestHandlerDelegate<Result<TResponse, Error>> next)
     {
-        var requestType = typeof(TRequest);
+        var requestType = typeof(TRequest).Name;
         var traceID = _httpContextAccessor.HttpContext!.TraceIdentifier;
 
         using var scope = _logger.BeginScope(new Dictionary<string, object>
         {
-            ["TraceID"] = traceID
+            ["TraceID"] = traceID,
+            ["Request"] = requestType
         });
         var sw = new Stopwatch();
         sw.Start();
-        _logger.LogInformation("Executing request {RequestType}", requestType.Name);
+        _logger.LogInformation("Executing request {RequestType}", requestType);
         
         var result = next();
         

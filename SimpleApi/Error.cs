@@ -4,7 +4,7 @@
     {
         public string Message { get; set; }
 
-        public Error(string message)
+        protected Error(string message)
         {
             Message = message;
         }
@@ -22,8 +22,21 @@
 
     public class BusinessError : Error
     {
-        public BusinessError(string message) : base(message)
+        protected BusinessError(string message) : base(message)
         {
+        }
+    }
+
+    public class ValidationError : BusinessError
+    {
+        public record ValidationFail(string Property, string Message);
+
+        private readonly IEnumerable<ValidationFail> _errors;
+        public IReadOnlyList<ValidationFail> Errors => _errors.ToList().AsReadOnly();
+
+        public ValidationError(IEnumerable<ValidationFail> errors) : base(nameof(ValidationError))
+        {
+            _errors = errors;
         }
     }
 
