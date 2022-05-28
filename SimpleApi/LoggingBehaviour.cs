@@ -21,7 +21,7 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
         RequestHandlerDelegate<Result<TResponse, Error>> next)
     {
         var requestType = typeof(TRequest).Name;
-        var traceID = _httpContextAccessor.HttpContext!.TraceIdentifier;
+        var traceID = Activity.Current?.Id ?? _httpContextAccessor.HttpContext!.TraceIdentifier;
 
         using var scope = _logger.BeginScope(new Dictionary<string, object>
         {

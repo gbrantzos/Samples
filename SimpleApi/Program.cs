@@ -1,5 +1,6 @@
 using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
+using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -57,11 +58,22 @@ try
 
     // Other services
     builder.Services
+        .AddProblemDetails(options =>
+        {
+            // Control when an exception is included
+            options.IncludeExceptionDetails = (ctx, ex) =>
+            {
+                // Fetch services from HttpContext.RequestServices
+                var env = ctx.RequestServices.GetRequiredService<IHostEnvironment>();
+                return env.IsDevelopment() || env.IsStaging();
+            };
+        } )
         .AddHttpContextAccessor()
         .AddScoped<DummyService>();
 
     // Build app and run
     var app = builder.Build();
+    app.UseProblemDetails();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
 

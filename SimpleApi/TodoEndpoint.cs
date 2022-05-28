@@ -22,23 +22,15 @@ public class TodoEndpoint : EndpointBaseAsync
         Tags = new[] {"TODOs Endpoint"})
     ]
     [ProducesResponseType(typeof(QueryResult<TodoViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public override async Task<ActionResult<QueryResult<TodoViewModel>>> HandleAsync(
         [FromQuery] bool acceptTerms,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        var result = await _mediator.Send(new SearchTodos() { TermsAccepted = acceptTerms} , cancellationToken);
+        var result = await _mediator.Send(new SearchTodos() {TermsAccepted = acceptTerms}, cancellationToken);
         if (result.HasErrors)
-        {
-            var error = result.ErrorOrDefault();
-            if (error is ValidationError validationError)
-                return BadRequest(validationError);
-            return BadRequest(result.ErrorOrDefault()?.Message ?? "Error!");
-        }
+            return result.Error.ToActionResult(HttpContext.Request.Path.ToString());
 
-        var list = result.DataOrDefault();
-        if (list is null)
-            return StatusCode(500);
-
-        return list;
+        return result.Data;
     }
 }

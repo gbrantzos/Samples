@@ -56,6 +56,7 @@ public class SearchTodosHandler : Handler<SearchTodos, QueryResult<TodoViewModel
             }
         };
 
+        // throw new NotImplementedException();
         // _service.WhoAmI();
         var task = _mediator.Publish(new Ping(), cancellationToken);
         _ = task.ContinueWith(_ =>

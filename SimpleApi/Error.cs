@@ -13,14 +13,31 @@
     public class SystemError : Error
     {
         public Exception Exception { get; }
+        public IReadOnlyList<string> AllMessages { get; }
 
         public SystemError(Exception exception) : base(exception.Message)
         {
-            Exception = exception;
+            Exception = exception.ThrowIfNull();
+            AllMessages = GetInnerMessages(exception);
+        }
+
+        private static List<string> GetInnerMessages(Exception exception)
+        {
+            var messages = new List<string>();
+            var inner = exception;
+            do
+            {
+                if (!messages.Contains(inner.Message))
+                    messages.Add(inner.Message);
+                inner = inner.InnerException;
+            }
+            while (inner != null);
+
+            return messages;
         }
     }
 
-    public class BusinessError : Error
+    public abstract class BusinessError : Error
     {
         protected BusinessError(string message) : base(message)
         {
@@ -38,10 +55,5 @@
         {
             _errors = errors;
         }
-    }
-
-    public static class ErrorExtensions
-    {
-        public static bool IsSystemError(this Error error) => error is SystemError;
     }
 }

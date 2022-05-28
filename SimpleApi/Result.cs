@@ -1,22 +1,26 @@
 ﻿namespace SimpleApi
 {
-    public class Result<TData, TError> where TError : Error
+    public class Result<TData, TError>
     {
         private readonly TData? _data;
         private readonly TError? _error;
-        private readonly bool _hasErrors;
 
-        public bool HasErrors => _hasErrors;
+        public bool HasErrors { get; }
 
         private Result(TData? data, TError? error = default, bool hasErrors = false)
         {
+            // Although TData is nullable, this constructor should not allow null values!
+            if (!hasErrors)
+                ArgumentNullException.ThrowIfNull(data);
+            
             _data = data;
             _error = error;
-            _hasErrors = hasErrors;
+            HasErrors = hasErrors;
         }
 
         private Result(TError error) : this(default, error, true)
         {
+            ArgumentNullException.ThrowIfNull(error);
         }
 
         public static implicit operator Result<TData, TError>(TData data) => new(data);
@@ -27,12 +31,12 @@
             ArgumentNullException.ThrowIfNull(dataFunc);
             ArgumentNullException.ThrowIfNull(errorFunc);
 
-            return _hasErrors
+            return HasErrors
                 ? errorFunc(_error ?? throw new ArgumentException(nameof(_error)))
                 : dataFunc(_data ?? throw new ArgumentException(nameof(_data)));
         }
-        
-        public TData? DataOrDefault() => this.Match(d => d, r => default(TData));
-        public TError? ErrorOrDefault() => this.Match(d => default(TError), r => r);
+
+        public TData Data => _data ?? throw new ArgumentNullException(nameof(_data));
+        public TError Error => _error ?? throw new ArgumentNullException(nameof(_error));
     }
 }
