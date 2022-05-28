@@ -2,7 +2,7 @@
 
 namespace SimpleApi;
 
-public static class Extensions
+public static class GuardExtensions
 {
     public static T ThrowIfNull<T>(this T parameter, 
         [CallerArgumentExpression("parameter")] string parameterName = null!, 

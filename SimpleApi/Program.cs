@@ -52,7 +52,7 @@ try
         .AddMediatR(thisAssembly)
         .AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>))
         .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-    
+
     // Setup FluentValidation
     builder.Services.AddValidatorsFromAssembly(thisAssembly);
 
@@ -67,7 +67,7 @@ try
                 var env = ctx.RequestServices.GetRequiredService<IHostEnvironment>();
                 return env.IsDevelopment() || env.IsStaging();
             };
-        } )
+        })
         .AddHttpContextAccessor()
         .AddScoped<DummyService>();
 
@@ -78,8 +78,10 @@ try
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
 
     app.MapControllers();
-    app.MapGet("/", () => "Welcome to SimpleAPI!").ExcludeFromDescription();
-    
+    app
+        .MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")
+        .ExcludeFromDescription();
+
     app.Run();
 }
 catch (Exception x)
