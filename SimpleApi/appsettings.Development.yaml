@@ -1,0 +1,7 @@
+﻿AllowedHosts: simpleapi.local
+Kestrel:
+  Endpoints:
+    Https:
+      Url: https://localhost:9998
+    Http:
+      Url: http://simpleapi.local:9999

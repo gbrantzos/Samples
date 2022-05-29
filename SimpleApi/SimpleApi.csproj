@@ -16,6 +16,7 @@
       <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.4.2" />
       <PackageReference Include="MediatR" Version="10.0.1" />
       <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
+      <PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.2.0" />
       <PackageReference Include="Serilog" Version="2.11.0" />
       <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
       <PackageReference Include="Serilog.Expressions" Version="3.4.0" />
@@ -26,6 +27,12 @@
 
     <ItemGroup>
         <EmbeddedResource Include="BuildInformation.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.Development.yaml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

@@ -26,6 +26,14 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
+    // Support YAML settings
+    builder.Host.ConfigureAppConfiguration((host, config) =>
+    {
+        var env = host.HostingEnvironment;
+        config.AddYamlFile("appsettings.yaml", optional: true, reloadOnChange: true);
+        config.AddYamlFile($"appsettings.{env.EnvironmentName}.yaml", optional: true, reloadOnChange: true);
+    });
+    
     // Use Autofac
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
