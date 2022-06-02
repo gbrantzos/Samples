@@ -17,8 +17,6 @@ public static class ErrorExtensions
         return toReturn;
     }
     
-    
-
     private static ActionResult ToActionResult(ValidationError validationError, string? instance)
     {
         var details = new ProblemDetails

@@ -4,26 +4,23 @@ using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Serilog.Events;
-using Serilog.Templates;
-using Serilog.Templates.Themes;
 using SimpleApi;
 
 var thisAssembly = typeof(Program).Assembly;
-
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{environment}.json", true)
+    .AddYamlFile("appsettings.yaml", optional: true, reloadOnChange: true)
+    .AddYamlFile($"appsettings.{environment}.yaml", optional: true, reloadOnChange: true)
+    .Build();
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console(new ExpressionTemplate(
-        "[{@l:u4}]{#if @p['TraceID'] is not null}[{@p['TraceID']} :: {@p['Request']}]{#end} {@m}\n{@x}",
-        theme: TemplateTheme.Literate))
-    .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+    .ReadFrom.Configuration(configuration)
     .CreateLogger();
 
 try
 {
     Log.Information("Starting SimpleAPI");
-
     var builder = WebApplication.CreateBuilder(args);
 
     // Support YAML settings

@@ -1,7 +1,22 @@
-﻿AllowedHosts: simpleapi.local
+﻿AllowedHosts: "*"
 Kestrel:
   Endpoints:
     Https:
       Url: https://localhost:9998
     Http:
       Url: http://simpleapi.local:9999
+Serilog:
+  Using: Serilog.Sinks.Console, Serilog.Expressions
+  MinimumLevel:
+    Default: Debug
+    Override:
+      System: Warning
+      Microsoft: Warning
+      Microsoft.Hosting.Lifetime: Information
+  WriteTo:
+    - Name: Console
+      Args:
+        formatter:
+          type: Serilog.Templates.ExpressionTemplate, Serilog.Expressions
+          template: "[{@l:u4}]{#if @p['TraceID'] is not null}[{@p['TraceID']} :: {@p['Request']}]{#end} {@m}\n{@x}"
+          theme: Serilog.Templates.Themes.TemplateTheme::Code, Serilog.Expressions
