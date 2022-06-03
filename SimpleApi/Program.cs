@@ -3,6 +3,7 @@ using FluentValidation;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
@@ -85,11 +86,13 @@ try
     app.UseProblemDetails();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
+    app.UseHttpMetrics();
 
     app.MapControllers();
     app
         .MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")
         .ExcludeFromDescription();
+    app.MapMetrics();
 
     app.Run();
 }
