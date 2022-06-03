@@ -4,23 +4,22 @@ using Hellang.Middleware.ProblemDetails;
 using MediatR;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Exceptions;
+using Serilog.Formatting.Compact;
 using SimpleApi;
 
 var thisAssembly = typeof(Program).Assembly;
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .AddJsonFile($"appsettings.{environment}.json", true)
-    .AddYamlFile("appsettings.yaml", optional: true, reloadOnChange: true)
-    .AddYamlFile($"appsettings.{environment}.yaml", optional: true, reloadOnChange: true)
-    .Build();
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .CreateLogger();
+    .WriteTo.Console()
+    .WriteTo.File(new CompactJsonFormatter(),
+        "log.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 7)
+    .Enrich.WithExceptionDetails()
+    .CreateBootstrapLogger();
 
 try
 {
-    Log.Information("Starting SimpleAPI");
     var builder = WebApplication.CreateBuilder(args);
 
     // Support YAML settings
@@ -30,12 +29,17 @@ try
         config.AddYamlFile("appsettings.yaml", optional: true, reloadOnChange: true);
         config.AddYamlFile($"appsettings.{env.EnvironmentName}.yaml", optional: true, reloadOnChange: true);
     });
-    
+
     // Use Autofac
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
     // Wire up Serilog
-    builder.Host.UseSerilog();
+    builder.Host.UseSerilog((ctx, services, config) =>
+    {
+        config
+            .ReadFrom.Configuration(ctx.Configuration)
+            .ReadFrom.Services(services);
+    });
 
     // Swagger
     builder.Services
@@ -95,5 +99,5 @@ catch (Exception x)
 }
 finally
 {
-    Log.Information("SimpleAPI shutdown");
+    Log.CloseAndFlush();
 }
