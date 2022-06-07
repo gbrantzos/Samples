@@ -1,135 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using NLog;
-using SqlKata;
-using SqlKata.Compilers;
-using Workbench;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 
-namespace Sandbox
+var client = new HttpClient();
+var request = new HttpRequestMessage()
 {
-    public static class Program
-    {
-        public static void Main(string[] args)
-        {
-            var fileName = @"C:\wrk_Temp\InfoSupport\pakoworld.xml";
-            var xml = XDocument.Load(fileName);
+    RequestUri = new Uri("http://localhost:9811/SearchBySkroutzID/SKZ-012323234"),
+    Method = HttpMethod.Get,
+};
+var cookieValue = "ss-id=FyfC1A7UadoCEKWxqUSC; domain=localhost; path=/";
+request.Headers.Add("Cookie", cookieValue);
+
+var response = await client.SendAsync(request);
+response.EnsureSuccessStatusCode();
+
+var data = await response.Content.ReadFromJsonAsync<ResponseData>();
+Console.WriteLine(data);
+Console.ReadKey(true);
 
 
-            // DataMedia
-            var result = xml
-                .Root
-                .Elements("products")
-                .Elements("product")
-                .Take(10)
-                .Select(x => new
-                {
-                    Sku = x.Element("sku").Value,
-                    Available = x.Element("instock").Value == "Y"
-                })
-                .ToDictionary(e => e.Sku, e => e.Available);
 
-            // Iliadis
-            //var result = xml
-            //    .Root
-            //    .Elements("products")
-            //    .Elements("product")
-            //    .Take(10)
-            //    .Select(x => new
-            //    {
-            //        sku = x.Element("sku").Value,
-            //        available = x.Element("instock").Value == "Y"
-            //    }).ToList();
-        }
-
-        public static void Main_SqlKata(string[] args)
-        {
-            // Create an instance of SQLServer
-            var compiler = new SqlServerCompiler();
-
-            var query = new Query("Users as u")
-                .Join("Categories as c", "c.Id", "c.Category_ID")
-                .Where("c.Id", 1)
-                .Where("c.Status", "Active");
-
-            SqlResult result = compiler.Compile(query);
-
-            string sql = result.Sql;
-            List<object> bindings = result.Bindings; // [ 1, "Active" ]
-        }
-
-        public static void Main_Result(string[] args)
-        {
-            var logger = LogManager.GetCurrentClassLogger();
-
-            logger.Warn("Testing");
-            Result<int> result = 32;
-            var r2 = Result.Ok(45);
-
-            if (result.HasErrors)
-            {
-                var fail = Result.Fail("This is a failure");
-
-                var output = result.When(() => "Success", () => "Failure!");
-                var oo2 = result.When((i) => $"Result is {i}", (s) => s);
-            };
-        }
-
-        public static void Main_Session(string[] args)
-        {
-            ISessionManager mgr = new SessionManager(new SessionPool());
-            using (var session = mgr.Create())
-            {
-                using (var session2 = mgr.Create())
-                {
-                }
-            }
-            using var session1 = mgr.Create();
-
-            Console.ReadKey();
-        }
-    }
-
-    public interface IService<T> where T : DTO, new()
-    {
-        T Get(string key);
-    }
-
-    public interface IServiceExt : IService<DTO>
-    {
-        void Do();
-    }
-
-    public class Service<T> : IService<T> where T: DTO, new()
-    {
-        public T Get(string key)
-        {
-            return new T { Name = key };
-        }
-    }
-    public class DTO
-    {
-        public string Name { get; set; }
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public class DTO2 : DTO { }
-
-    public class ServiceDTO : IServiceExt
-    {
-        public void Do()
-        {
-            // throw new NotImplementedException();
-        }
-
-        public DTO Get(string key)
-        {
-            return new DTO { Name = $"Advanced {key}" };
-        }
-    }
-}
+public class ResponseData
+{
+    public int StatusCode { get; set; }
+    public int TotalRows { get; set; }
+    public JsonElement Element { get; set; }
+};

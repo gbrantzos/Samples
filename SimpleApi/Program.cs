@@ -71,7 +71,7 @@ try
         .AddProblemDetails(options =>
         {
             // Control when an exception is included
-            options.IncludeExceptionDetails = (ctx, ex) =>
+            options.IncludeExceptionDetails = (ctx, _) =>
             {
                 // Fetch services from HttpContext.RequestServices
                 var env = ctx.RequestServices.GetRequiredService<IHostEnvironment>();
