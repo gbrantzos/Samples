@@ -83,11 +83,17 @@ try
 
     // Build app and run
     var app = builder.Build();
+    
+    // Http logging
+    // Relevant logger: Microsoft.AspNetCore.HttpLogging.HttpLoggingMiddleware
+    // https://josef.codes/asp-net-core-6-http-logging-log-requests-responses/
+    app.UseHttpLogging(); 
+    
     app.UseProblemDetails();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
     app.UseHttpMetrics();
-
+    
     app.MapControllers();
     app
         .MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")

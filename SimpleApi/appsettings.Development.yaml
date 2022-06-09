@@ -12,6 +12,7 @@ Serilog:
     Override:
       System: Warning
       Microsoft: Warning
+      Microsoft.AspNetCore.HttpLogging.HttpLoggingMiddleware: Information
       Microsoft.Hosting.Lifetime: Information
   WriteTo:
     - Name: Console

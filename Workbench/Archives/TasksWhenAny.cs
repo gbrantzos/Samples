@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
 using Oracle.ManagedDataAccess.Client;
 
-namespace Workbench
+namespace Workbench.Archives
 {
     public class TasksWhenAny
     {
         // private const string ConnectionString = "Server=WORKBOX;Database=glxSJA;Integrated Security=true";
-        private const string ConnectionString = "user id=S01001;password=S01001;data source=//senserver.gbworks.lan:1521/SEN";
-
+        // private const string ConnectionString = "user id=S01001;password=S01001;data source=//senserver.gbworks.lan:1521/SEN";
+        private const string ConnectionString = "";
         public async Task<int> ExecuteQuery(string delayString, CancellationToken cancellationToken = default)
         {
             if (delayString == "0:00:30")
