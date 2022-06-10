@@ -10,6 +10,7 @@ using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
 using SimpleApi;
 
+
 var thisAssembly = typeof(Program).Assembly;
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -40,12 +41,9 @@ try
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
     // Wire up Serilog
-    builder.Host.UseSerilog((ctx, services, config) =>
-    {
-        config
-            .ReadFrom.Configuration(ctx.Configuration)
-            .ReadFrom.Services(services);
-    });
+    builder.Host.UseSerilog((ctx, services, config) => config
+        .ReadFrom.Configuration(ctx.Configuration)
+        .ReadFrom.Services(services));
 
     // Swagger
     builder.Services
