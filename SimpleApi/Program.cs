@@ -2,6 +2,7 @@ using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.OpenApi.Models;
 using Prometheus;
 using Serilog;
@@ -26,6 +27,10 @@ try
     // Support YAML settings
     builder.Host.ConfigureAppConfiguration((host, config) =>
     {
+        var jsonSources = config.Sources.Where(s => s is JsonConfigurationSource).ToList();
+        foreach (var source in jsonSources)
+            config.Sources.Remove(source);
+
         var env = host.HostingEnvironment;
         config.AddYamlFile("appsettings.yaml", optional: true, reloadOnChange: true);
         config.AddYamlFile($"appsettings.{env.EnvironmentName}.yaml", optional: true, reloadOnChange: true);
@@ -83,17 +88,18 @@ try
 
     // Build app and run
     var app = builder.Build();
-    
+
     // Http logging
     // Relevant logger: Microsoft.AspNetCore.HttpLogging.HttpLoggingMiddleware
     // https://josef.codes/asp-net-core-6-http-logging-log-requests-responses/
-    app.UseHttpLogging(); 
-    
+    app.UseHttpLogging();
+    app.UseSerilogRequestLogging();
+
     app.UseProblemDetails();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
     app.UseHttpMetrics();
-    
+
     app.MapControllers();
     app
         .MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")
