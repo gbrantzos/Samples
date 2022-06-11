@@ -99,16 +99,29 @@ try
     app.UseHttpMetrics();
 
     app.MapControllers();
-    app
-        .MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")
+    app.MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")
         .ExcludeFromDescription();
     app.MapMetrics();
+
+    // Sample middleware accessing endpoint information
+    /*
+    app.Use(async (context, func) =>
+    {
+        var route = context.GetEndpoint();
+        await func();
+    });
+    */
 
     app.Run();
 }
 catch (Exception x)
 {
-    Log.Error(x, "Unhandled exception: {Exception}", x.Message);
+    Log.Error(x, "Unhandled exception: {ErrorMessage}", x.Message);
+#if DEBUG
+    // Give a last chance to view exception
+    Console.WriteLine("Press eny key to exit...");
+    Console.ReadKey(true);
+#endif
 }
 finally
 {
