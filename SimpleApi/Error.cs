@@ -49,7 +49,7 @@
         public record ValidationFail(string Property, string Message);
 
         private readonly IEnumerable<ValidationFail> _errors;
-        public IReadOnlyList<ValidationFail> Errors => _errors.ToList().AsReadOnly();
+        public IEnumerable<ValidationFail> Errors => _errors.ToList().AsReadOnly();
 
         public ValidationError(IEnumerable<ValidationFail> errors) : base(nameof(ValidationError))
         {

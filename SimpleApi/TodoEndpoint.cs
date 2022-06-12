@@ -27,7 +27,7 @@ public class TodoEndpoint : EndpointBaseAsync
         [FromQuery] bool acceptTerms,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        var result = await _mediator.Send(new SearchTodos() {TermsAccepted = acceptTerms}, cancellationToken);
+        var result = await _mediator.Send(new SearchTodos(acceptTerms), cancellationToken);
         if (result.HasErrors)
             return result.Error.ToActionResult(HttpContext.Request.Path.ToString());
 

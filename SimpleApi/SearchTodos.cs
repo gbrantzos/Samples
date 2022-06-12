@@ -3,15 +3,7 @@ using MediatR;
 
 namespace SimpleApi;
 
-public class SearchTodos : Query<QueryResult<TodoViewModel>>
-{
-    public bool TermsAccepted { get; init; }
-
-    public override string ToString()
-    {
-        return "Search TODOs";
-    }
-}
+public record SearchTodos(bool TermsAccepted) : Query<QueryResult<TodoViewModel>>;
 
 public class SearchTodosValidator : AbstractValidator<SearchTodos>
 {

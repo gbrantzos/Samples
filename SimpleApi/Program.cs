@@ -2,6 +2,7 @@ using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.OpenApi.Models;
 using Prometheus;
@@ -65,6 +66,9 @@ try
         .AddMediatR(thisAssembly)
         .AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>))
         .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+    
+    // Suggested flow of pipelines
+    // Logging -> Validation -> Transaction -> Audit -> Security -> Metrics/Performance -> Caching -> Exception handling
 
     // Setup FluentValidation
     builder.Services.AddValidatorsFromAssembly(thisAssembly);
@@ -105,10 +109,10 @@ try
 
     // Sample middleware accessing endpoint information
     /*
-    app.Use(async (context, func) =>
+    app.Use(async (context, next) =>
     {
         var route = context.GetEndpoint();
-        await func();
+        await next();
     });
     */
 

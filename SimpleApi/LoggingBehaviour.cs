@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using MediatR;
+using Prometheus;
 
 namespace SimpleApi;
 
@@ -22,15 +23,17 @@ public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest,
     {
         var requestType = typeof(TRequest).Name;
         var traceID = Activity.Current?.Id ?? _httpContextAccessor.HttpContext!.TraceIdentifier;
-
+        var counter = Metrics.CreateCounter("simple_api_requests", "SimpleAPI requests", new[] {"request_type"});
+        counter.WithLabels(requestType).Inc();
         using var scope = _logger.BeginScope(new Dictionary<string, object>
         {
             ["TraceID"] = traceID,
             ["Request"] = requestType
         });
+        
+        _logger.LogInformation("Executing request {RequestType}", requestType);
         var sw = new Stopwatch();
         sw.Start();
-        _logger.LogInformation("Executing request {RequestType}", requestType);
         
         var result = next();
         

@@ -2,17 +2,17 @@
 
 namespace SimpleApi
 {
-    public abstract class Request<TResponse> : IRequest<Result<TResponse, Error>>
+    public abstract record Request<TResponse> : IRequest<Result<TResponse, Error>>
     {
     
     }
 
-    public class Command<TResponse> : Request<TResponse>
+    public record Command<TResponse> : Request<TResponse>
     {
     
     }
 
-    public class Query<TResponse> : Request<TResponse>
+    public record Query<TResponse> : Request<TResponse>
     {
     
     }
