@@ -106,7 +106,7 @@ public class RequestResponseLoggingMiddleware
         }
 
         // Finally log...
-        _logger.LogInformation("Request - Response logging\n{@LogItem}", logItem);
+        _logger.LogInformation("Advanced HTTP logging\n\n{@LogItem}\n", logItem);
     }
 
     private bool ShouldLog(HttpContext context)

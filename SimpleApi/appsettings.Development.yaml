@@ -22,5 +22,5 @@ Serilog:
       Args:
         formatter:
           type: Serilog.Templates.ExpressionTemplate, Serilog.Expressions
-          template: "[{@l:u4}]{#if @p['TraceID'] is not null}[{@p['TraceID']} :: {@p['Request']}]{#end} {SourceContext} {@m}\n{@x}"
+          template: "{@t:HH:mm:ss} | {@l:u3} | {SourceContext, -50} | {#if @p['TraceID'] is not null}{@p['TraceID']} {@p['Request']} | {#end}{@m}\n{@x}"
           theme: Serilog.Templates.Themes.TemplateTheme::Code, Serilog.Expressions
