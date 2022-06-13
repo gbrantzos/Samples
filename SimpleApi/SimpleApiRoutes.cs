@@ -2,5 +2,5 @@
 
 public static class SimpleApiRoutes
 {
-    public const string Todo = "todo/{id}";
+    public const string Todo = "todos";
 }
