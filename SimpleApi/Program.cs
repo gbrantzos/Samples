@@ -2,15 +2,14 @@ using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using Hellang.Middleware.ProblemDetails;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.OpenApi.Models;
 using Prometheus;
 using Serilog;
+using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Formatting.Compact;
 using SimpleApi;
-
 
 var thisAssembly = typeof(Program).Assembly;
 Log.Logger = new LoggerConfiguration()
@@ -66,7 +65,7 @@ try
         .AddMediatR(thisAssembly)
         .AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>))
         .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-    
+
     // Suggested flow of pipelines
     // Logging -> Validation -> Transaction -> Audit -> Security -> Metrics/Performance -> Caching -> Exception handling
 
@@ -91,30 +90,48 @@ try
     // Build app and run
     var app = builder.Build();
 
-    // Http logging
-    // Relevant logger: Microsoft.AspNetCore.HttpLogging.HttpLoggingMiddleware
-    // https://josef.codes/asp-net-core-6-http-logging-log-requests-responses/
-    app.UseHttpLogging();
-    app.UseSerilogRequestLogging();
-
     app.UseProblemDetails();
     app.UseSwagger();
     app.UseSwaggerUI(c => c.DefaultModelsExpandDepth(-1)); // Disable swagger schemas at bottom
+
+    // Serilog HTTP logging, suppress Prometheus noise
+    // Also add to appsettings "Serilog.AspNetCore.RequestLoggingMiddleware: Information"
+    // https://github.com/serilog/serilog-aspnetcore/issues/100
+    app.UseSerilogRequestLogging(options =>
+    {
+        options.GetLevel = (ctx, elapsedMs, ex) =>
+        {
+            var path = ctx.Request.Path.Value ?? String.Empty;
+            switch (path)
+            {
+                case "/":
+                case "/metrics":
+                    return LogEventLevel.Debug;
+            }
+
+            return ex != null || ctx.Response.StatusCode > 499
+                ? LogEventLevel.Error
+                : LogEventLevel.Information;
+        };
+    });
+    
+    app.UseRequestResponseLogging(options =>
+    {
+        options.ExcludePath("/metrics");
+        options.ExcludePath("/configuration");
+    });
+
     app.UseHttpMetrics();
 
     app.MapControllers();
+    app.MapMetrics();
+    
     app.MapGet("/", () => $"Welcome to SimpleAPI\n\n{BuildInformation.Instance.ToDisplayString()}")
         .ExcludeFromDescription();
-    app.MapMetrics();
 
-    // Sample middleware accessing endpoint information
-    /*
-    app.Use(async (context, next) =>
-    {
-        var route = context.GetEndpoint();
-        await next();
-    });
-    */
+    // Check also
+    // https://andrewlock.net/viewing-overriden-configuration-values-in-aspnetcore/
+    app.MapGet("/configuration", () => builder.Configuration.GetDebugView()).ExcludeFromDescription();
 
     app.Run();
 }
