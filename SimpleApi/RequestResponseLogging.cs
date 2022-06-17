@@ -47,8 +47,8 @@ public class RequestResponseLoggingMiddleware
         }
 
         var endpoint = context.GetEndpoint() as RouteEndpoint;
-        var routingKey = endpoint?.RoutePattern?.RawText;
-        
+        var routingKey = endpoint?.RoutePattern.RawText;
+
         // Get request details
         var logItem = new RequestResponseLogItem
         {

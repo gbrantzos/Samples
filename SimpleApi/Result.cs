@@ -12,7 +12,7 @@
             // Although TData is nullable, this constructor should not allow null values!
             if (!hasErrors)
                 ArgumentNullException.ThrowIfNull(data);
-            
+
             _data = data;
             _error = error;
             HasErrors = hasErrors;

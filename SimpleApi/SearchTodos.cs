@@ -43,7 +43,7 @@ public class SearchTodosHandler : Handler<SearchTodos, QueryResult<TodoViewModel
         {
             new TodoViewModel
             {
-                Description = "Build a cool API",
+                Description = "Build a cool API", 
                 IsDone = false
             }
         };
