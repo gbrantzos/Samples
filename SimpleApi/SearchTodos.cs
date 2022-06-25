@@ -5,6 +5,8 @@ namespace SimpleApi;
 
 public record SearchTodos(bool TermsAccepted) : Query<QueryResult<TodoViewModel>>;
 
+public record TodoViewModel(string Description, bool IsDone);
+
 public class SearchTodosValidator : AbstractValidator<SearchTodos>
 {
     public SearchTodosValidator()
@@ -13,12 +15,6 @@ public class SearchTodosValidator : AbstractValidator<SearchTodos>
             .Equal(true)
             .WithMessage("You must accept terms");
     }
-}
-
-public class TodoViewModel
-{
-    public string Description { get; init; } = String.Empty;
-    public bool IsDone { get; init; }
 }
 
 public class SearchTodosHandler : Handler<SearchTodos, QueryResult<TodoViewModel>>
@@ -37,15 +33,11 @@ public class SearchTodosHandler : Handler<SearchTodos, QueryResult<TodoViewModel
     protected override async Task<Result<QueryResult<TodoViewModel>, Error>> HandleCore(SearchTodos request,
         CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Handling command '{Command}'", request.ToString());
+        _logger.LogInformation("Handling command '{Command}'", request.ToString());
         await Task.CompletedTask;
         var list = new List<TodoViewModel>
         {
-            new TodoViewModel
-            {
-                Description = "Build a cool API", 
-                IsDone = false
-            }
+            new("Build a cool API", false)
         };
 
         // throw new NotImplementedException();

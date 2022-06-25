@@ -8,7 +8,7 @@ Kestrel:
 # For more details check the following:
 # https://nblumhardt.com/2021/06/customize-serilog-text-output/
 Serilog:
-  Using: Serilog.Sinks.Console, Serilog.Expressions
+  Using: Serilog.Sinks.Console, Serilog.Expressions, Serilog.Sinks.Graylog
   MinimumLevel:
     Default: Debug
     Override:
@@ -24,3 +24,9 @@ Serilog:
           type: Serilog.Templates.ExpressionTemplate, Serilog.Expressions
           template: "{@t:HH:mm:ss} | {@l:u3} | {SourceContext, -50} | {#if @p['TraceID'] is not null}{@p['TraceID']} {@p['Request']} | {#end}{@m}\n{@x}"
           theme: Serilog.Templates.Themes.TemplateTheme::Code, Serilog.Expressions
+    - Name: Graylog
+      Args:
+        hostnameOrAddress: graylog.gbworks.lan
+        port: 12201
+        transportType: Udp
+        facility: SimpleAPI

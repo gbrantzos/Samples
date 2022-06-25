@@ -58,7 +58,10 @@ try
     // Setup controllers
     builder.Services
         .AddControllers()
-        .AddControllersAsServices();
+        .AddControllersAsServices()
+        .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
+        // Suppress invalid model auto response
+        // https://code-maze.com/apicontroller-attribute-in-asp-net-core-web-api/
 
     // Setup Mediator
     builder.Services
@@ -148,3 +151,7 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+
+// In case we need a "wrapper" around our responses
+// https://gist.github.com/ricardo-miguel/5dd105937ca70fb7c91dc0efc4c807b9
