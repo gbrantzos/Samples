@@ -1,6 +1,6 @@
 ﻿namespace SimpleApi
 {
-    public class Result<TData, TError>
+    public sealed class Result<TData, TError>
     {
         private readonly TData? _data;
         private readonly TError? _error;
@@ -9,19 +9,22 @@
 
         private Result(TData? data, TError? error = default, bool hasErrors = false)
         {
-            // Although TData is nullable, this constructor should not allow null values!
             if (!hasErrors)
+            {
+                // When we don't have an Error, data should not be null
                 ArgumentNullException.ThrowIfNull(data);
-
+            }
+            if (hasErrors)
+            {
+                // When we do have an Error, make sure it is not be null
+                ArgumentNullException.ThrowIfNull(error);
+            }
             _data = data;
             _error = error;
             HasErrors = hasErrors;
         }
 
-        private Result(TError error) : this(default, error, true)
-        {
-            ArgumentNullException.ThrowIfNull(error);
-        }
+        private Result(TError error) : this(default, error, true) { }
 
         public static implicit operator Result<TData, TError>(TData data) => new(data);
         public static implicit operator Result<TData, TError>(TError error) => new(error);

@@ -27,7 +27,7 @@ public class ListTodoEndpoint : EndpointBaseAsync
         [FromQuery] int accept,
         CancellationToken cancellationToken = new CancellationToken())
     {
-        var result = await _mediator.Send(new SearchTodos(accept != 0), cancellationToken);
+        var result = await _mediator.Send(new SearchTodo(accept != 0), cancellationToken);
         if (result.HasErrors)
             return result.Error.ToActionResult(HttpContext.Request.Path.ToString());
 

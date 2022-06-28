@@ -3,13 +3,13 @@ using MediatR;
 
 namespace SimpleApi;
 
-public record SearchTodos(bool TermsAccepted) : Query<QueryResult<TodoViewModel>>;
+public record SearchTodo(bool TermsAccepted) : Query<QueryResult<TodoViewModel>>;
 
 public record TodoViewModel(string Description, bool IsDone);
 
-public class SearchTodosValidator : AbstractValidator<SearchTodos>
+public class SearchTodoValidator : AbstractValidator<SearchTodo>
 {
-    public SearchTodosValidator()
+    public SearchTodoValidator()
     {
         RuleFor(x => x.TermsAccepted)
             .Equal(true)
@@ -17,20 +17,20 @@ public class SearchTodosValidator : AbstractValidator<SearchTodos>
     }
 }
 
-public class SearchTodosHandler : Handler<SearchTodos, QueryResult<TodoViewModel>>
+public class SearchTodoHandler : Handler<SearchTodo, QueryResult<TodoViewModel>>
 {
-    private readonly ILogger<SearchTodosHandler> _logger;
+    private readonly ILogger<SearchTodoHandler> _logger;
     private readonly IMediator _mediator;
-    private readonly DummyService _service;
+    // private readonly DummyService _service;
 
-    public SearchTodosHandler(ILogger<SearchTodosHandler> logger, IMediator mediator, DummyService service)
+    public SearchTodoHandler(ILogger<SearchTodoHandler> logger, IMediator mediator, DummyService service)
     {
         _logger = logger;
         _mediator = mediator;
-        _service = service;
+        // _service = service;
     }
 
-    protected override async Task<Result<QueryResult<TodoViewModel>, Error>> HandleCore(SearchTodos request,
+    protected override async Task<Result<QueryResult<TodoViewModel>, Error>> HandleCore(SearchTodo request,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation("Handling command '{Command}'", request.ToString());

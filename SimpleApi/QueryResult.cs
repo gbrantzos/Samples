@@ -1,6 +1,6 @@
 ﻿namespace SimpleApi;
 
-public class QueryResult<T> 
+public record QueryResult<T>
 {
     public IEnumerable<T> Items { get; }
     public long Count { get; }
