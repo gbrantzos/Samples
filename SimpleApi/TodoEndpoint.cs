@@ -18,7 +18,7 @@ public class ListTodoEndpoint : EndpointBaseAsync
         Summary = "TODOs List",
         Description = "List of TODO items",
         OperationId = "Todo.List",
-        Tags = new[] {"TODOs Endpoint"})
+        Tags = new[] { "TODOs Endpoint" })
     ]
     [Produces("application/json")]
     [ProducesResponseType(typeof(QueryResult<TodoViewModel>), StatusCodes.Status200OK)]
@@ -44,10 +44,11 @@ public class SaveTodoEndpoint : EndpointBaseAsync
         Summary = "Save TODO",
         Description = "Create or update a TODO item",
         OperationId = "Todo.Save",
-        Tags = new[] {"TODOs Endpoint"})
+        Tags = new[] { "TODOs Endpoint" })
     ]
     [Consumes("application/json")]
-    public override async Task<ActionResult> HandleAsync(TodoViewModel request, CancellationToken cancellationToken = new CancellationToken())
+    public override async Task<ActionResult> HandleAsync(TodoViewModel request,
+        CancellationToken cancellationToken = new CancellationToken())
     {
         await Task.CompletedTask;
         return Ok("TODO saved");
