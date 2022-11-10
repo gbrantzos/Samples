@@ -27,3 +27,6 @@ public class ResponseData
     public int TotalRows { get; set; }
     public JsonElement Element { get; set; }
 };
+
+
+// https://stackoverflow.com/questions/70595366/httpclient-is-sending-request-cookies-from-other-requests-responses
