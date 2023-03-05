@@ -57,5 +57,6 @@ Console.WriteLine(JsonSerializer.Serialize(existing, serializationOptions));
 // existing.FullName = "Simple Customer - v3";
 // await uow.SaveChanges();
 
-//context.Add(customer);
-//await context.SaveChangesAsync();
+context.Add(customer);
+await context.SaveChangesAsync();
+Console.ReadKey();
